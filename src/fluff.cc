@@ -39,6 +39,37 @@ void setupFluff() {
     graphicsTemplate->Set(String::New("setMode"), FunctionTemplate::New(GraphicsSetMode));
     graphicsTemplate->Set(String::New("setFPS"), FunctionTemplate::New(GraphicsSetFPS));
     
+    graphicsTemplate->Set(String::New("setBackgroundColor"), FunctionTemplate::New(GraphicsSetBackgroundColor));
+    graphicsTemplate->Set(String::New("clear"), FunctionTemplate::New(GraphicsClear));
+    
+    graphicsTemplate->Set(String::New("setBlendMode"), FunctionTemplate::New(GraphicsSetBlendMode));
+    graphicsTemplate->Set(String::New("setColor"), FunctionTemplate::New(GraphicsSetColor));
+    
+    graphicsTemplate->Set(String::New("setPolygonSmoothing"), FunctionTemplate::New(GraphicsSetPolygonSmoothing));
+    
+    graphicsTemplate->Set(String::New("setLineWidth"), FunctionTemplate::New(GraphicsSetLineWidth));
+    graphicsTemplate->Set(String::New("setLineSmoothing"), FunctionTemplate::New(GraphicsSetLineSmoothing));
+    
+    graphicsTemplate->Set(String::New("line"), FunctionTemplate::New(GraphicsLine));    
+    
+    graphicsTemplate->Set(String::New("circle"), FunctionTemplate::New(GraphicsCircle));
+    graphicsTemplate->Set(String::New("circleFilled"), FunctionTemplate::New(GraphicsCircleFilled));
+    
+    graphicsTemplate->Set(String::New("triangle"), FunctionTemplate::New(GraphicsTriangle));
+    graphicsTemplate->Set(String::New("triangleFilled"), FunctionTemplate::New(GraphicsTriangleFilled)); 
+    
+    graphicsTemplate->Set(String::New("rectangle"), FunctionTemplate::New(GraphicsRectangle));
+    graphicsTemplate->Set(String::New("rectangleFilled"), FunctionTemplate::New(GraphicsRectangleFilled)); 
+    
+    graphicsTemplate->Set(String::New("polygon"), FunctionTemplate::New(GraphicsPolygon));
+    graphicsTemplate->Set(String::New("polygonFilled"), FunctionTemplate::New(GraphicsPolygonFilled)); 
+    
+    graphicsTemplate->Set(String::New("rotate"), FunctionTemplate::New(GraphicsRotate));
+    graphicsTemplate->Set(String::New("translate"), FunctionTemplate::New(GraphicsTranslate));
+    graphicsTemplate->Set(String::New("scale"), FunctionTemplate::New(GraphicsScale));
+    
+    graphicsTemplate->Set(String::New("push"), FunctionTemplate::New(GraphicsTranslate));
+    graphicsTemplate->Set(String::New("pop"), FunctionTemplate::New(GraphicsScale)); 
     
     // Tuff
     Handle<ObjectTemplate> fluffTemplate = ObjectTemplate::New();

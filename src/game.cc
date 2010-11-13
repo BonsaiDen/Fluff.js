@@ -32,10 +32,43 @@ using namespace std;
 
 // Game Runtime ----------------------------------------------------------------
 // -----------------------------------------------------------------------------
-void GameCreate(int width, int height, const char *title) {
-    gameWindow.Create(sf::VideoMode(width, height, 32), title, sf::Style::Close);
+void GameCreate(int width, int height, const char *title, int aa) {
+    sf::WindowSettings settings;
+    settings.DepthBits = 8;
+    settings.StencilBits = 8;
+    settings.AntialiasingLevel = aa;
+    gameWindow.Create(sf::VideoMode(width, height, 32), title,
+                      sf::Style::Close, settings);
+    
     gameWindow.SetFramerateLimit(gameFPS);
+    
+    gameWidth = width;
+    gameHeight = height;
     gameRunning = true;
+    
+    GameInitGL();
+}
+
+void GameInitGL() {
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, gameWidth, gameHeight, 0, 0, 1);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glDisable(GL_DEPTH_TEST);
+    glClearColor(0.f, 0.f, 0.f, 1.f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+//    glEnable(GL_MULTISAMPLE_ARB);
+//    
+//    glEnable(GL_BLEND);
+//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//    
+//    glEnable(GL_POLYGON_SMOOTH);
+//    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+//    
+//    glEnable(GL_LINE_SMOOTH);
+//    glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
 }
 
 void GameLoop() {

@@ -43,6 +43,10 @@ int gameFPS = 30;
 bool gameFocus = false;
 bool gameMouse = false;
 
+int gameStacks = 0;
+int gameWidth = 0;
+int gameHeight = 0;
+
 
 // JavaScript ------------------------------------------------------------------
 Handle<Script> loadScript(const char *filename);

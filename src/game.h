@@ -30,7 +30,8 @@ using namespace std;
 
 // Game Runtime ----------------------------------------------------------------
 // -----------------------------------------------------------------------------
-void GameCreate(int width, int height, const char *title);
+void GameCreate(int width, int height, const char *title, int aa);
+void GameInitGL();
 void GameLoop();
 void GameEvents();
 Handle<Value> GameExit(const Arguments& args);
