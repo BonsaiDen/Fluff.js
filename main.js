@@ -14,7 +14,7 @@ fluff.onUpdate = function(dt) {
 
 fluff.onDraw = function() {
     fluff.graphics.clear();
-   // for(var i = 0; i < 100; i++) {
+    for(var i = 0; i < 100; i++) {
         fluff.graphics.setColor(255, 0, 0);
         fluff.graphics.triangle(100, 0, 50, 200, 150, 200);
         fluff.graphics.setColor(0, 255, 0);
@@ -22,7 +22,7 @@ fluff.onDraw = function() {
         fluff.graphics.setColor(255, 255, 0);
         fluff.graphics.setColor(0, 255, 255);
         fluff.graphics.rectangleFilled(10, 10, 100, 50);
-  //  }
+    }
 };
 
 fluff.onExit = function() {
