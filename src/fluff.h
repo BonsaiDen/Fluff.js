@@ -30,36 +30,44 @@ using namespace std;
 #ifndef FLUFF_H
 #define FLUFF_H
 
+
 // V8 --------------------------------------------------------------------------
 Handle<Object> global;
 Persistent<Object> fluff;
+Persistent<Object> input;
 
 
 // Game ------------------------------------------------------------------------
 sf::Window gameWindow;
-sf::Clock gameClock;
+
+// General
 bool gameRunning = false;
 int gameFPS = 30;
 bool gameFocus = false;
 bool gameMouse = false;
+int gameCursor = true;
 
+// OpenGL
 int gameStacks = 0;
-int gameWidth = 0;
-int gameHeight = 0;
 
+// Keyboard
+const int KEY_COUNT = 384;
+int gameKeyReset = true;
+int gameKeys[KEY_COUNT];
+int gameKeysOld[KEY_COUNT];
+bool gameKeyShift = false;
+bool gameKeyControl = false;
+bool gameKeyAlt = false;
 
-// JavaScript ------------------------------------------------------------------
-Handle<Script> loadScript(const char *filename);
-void loadGame();
-
-
-// Fluff -----------------------------------------------------------------------
-bool callFunction(const char *name, Handle<Value> *args, int argc);
-void setupFluff();
-
-
-// Objects ---------------------------------------------------------------------
-Handle<Value> log(const Arguments& args);
+// Mouse
+const int BUTTON_COUNT = 10;
+int gameMouseX = 0;
+int gameMouseY = 0;
+bool gameButtonReset = true;
+int gameButtons[BUTTON_COUNT];
+int gameButtonsOld[BUTTON_COUNT];
+int gameMouseScrollOld = 0;
+int gameMouseScroll = 0;
 
 #endif
 

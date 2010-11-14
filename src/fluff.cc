@@ -24,6 +24,7 @@
 #include "fluff.h"
 #include "util.cc"
 #include "objects.cc"
+#include "input.cc"
 #include "graphics.cc"
 #include "game.cc"
 
@@ -34,10 +35,42 @@ using namespace std;
 void setupFluff() {
     HandleScope scope;
     
+    // Input
+    Handle<ObjectTemplate> InputTemplate = ObjectTemplate::New();
+    InputTemplate->Set(String::New("hasFocus"), FunctionTemplate::New(InputHasFocus));
+    InputTemplate->Set(String::New("hasMouse"), FunctionTemplate::New(InputHasMouse));
+    
+    InputTemplate->Set(String::New("getButtonReset"), FunctionTemplate::New(InputGetButtonReset));
+    InputTemplate->Set(String::New("setButtonReset"), FunctionTemplate::New(InputSetButtonReset));
+    
+    InputTemplate->Set(String::New("getMouseDown"), FunctionTemplate::New(InputMouseDown));
+    InputTemplate->Set(String::New("getMouseUp"), FunctionTemplate::New(InputMouseUp));
+    InputTemplate->Set(String::New("getMouseClicked"), FunctionTemplate::New(InputMouseClicked));
+    
+    InputTemplate->Set(String::New("getMouseScrolled"), FunctionTemplate::New(InputMouseScrolled));
+    
+    InputTemplate->Set(String::New("getMouseX"), FunctionTemplate::New(InputMouseX));
+    InputTemplate->Set(String::New("getMouseY"), FunctionTemplate::New(InputMouseY));
+    
+    InputTemplate->Set(String::New("getKeyReset"), FunctionTemplate::New(InputGetKeyReset));
+    InputTemplate->Set(String::New("setKeyReset"), FunctionTemplate::New(InputSetKeyReset));
+    
+    InputTemplate->Set(String::New("getKeyDown"), FunctionTemplate::New(InputKeyDown));
+    InputTemplate->Set(String::New("getKeyUp"), FunctionTemplate::New(InputKeyUp));
+    InputTemplate->Set(String::New("getKeyPressed"), FunctionTemplate::New(InputKeyPressed));
+    
+    InputTemplate->Set(String::New("getControl"), FunctionTemplate::New(InputControl));
+    InputTemplate->Set(String::New("getShift"), FunctionTemplate::New(InputShift));
+    InputTemplate->Set(String::New("getAlt"), FunctionTemplate::New(InputAlt));
+    
     // Graphics
     Handle<ObjectTemplate> graphicsTemplate = ObjectTemplate::New();
     graphicsTemplate->Set(String::New("setMode"), FunctionTemplate::New(GraphicsSetMode));
     graphicsTemplate->Set(String::New("setFPS"), FunctionTemplate::New(GraphicsSetFPS));
+    graphicsTemplate->Set(String::New("getFPS"), FunctionTemplate::New(GraphicsGetFPS)); 
+    graphicsTemplate->Set(String::New("setPosition"), FunctionTemplate::New(GraphicsSetPosition));
+    graphicsTemplate->Set(String::New("setMouse"), FunctionTemplate::New(GraphicsSetMouse));
+    graphicsTemplate->Set(String::New("getMouse"), FunctionTemplate::New(GraphicsGetMouse));
     
     graphicsTemplate->Set(String::New("setBackgroundColor"), FunctionTemplate::New(GraphicsSetBackgroundColor));
     graphicsTemplate->Set(String::New("clear"), FunctionTemplate::New(GraphicsClear));
@@ -71,13 +104,18 @@ void setupFluff() {
     graphicsTemplate->Set(String::New("push"), FunctionTemplate::New(GraphicsTranslate));
     graphicsTemplate->Set(String::New("pop"), FunctionTemplate::New(GraphicsScale)); 
     
-    // Tuff
+    
+    // Input
+    input = Persistent<Object>::New(InputTemplate->NewInstance());
+    
+    // Fluff
     Handle<ObjectTemplate> fluffTemplate = ObjectTemplate::New();
     fluffTemplate->Set(String::New("log"), FunctionTemplate::New(log));
     fluffTemplate->Set(String::New("exit"), FunctionTemplate::New(GameExit));
     
     fluff = Persistent<Object>::New(fluffTemplate->NewInstance());
     fluff->Set(String::New("graphics"), Persistent<Object>::New(graphicsTemplate->NewInstance()));
+    fluff->Set(String::New("input"), input);
     
     global->Set(String::New("fluff"), fluff);
 }
@@ -100,6 +138,8 @@ int main(int argc, char* argv[]) {
         GameLoop();
     }
     
+    global.Clear();
+    fluff.Clear();
     context.Dispose();
     return 0;
 }

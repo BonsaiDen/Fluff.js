@@ -22,7 +22,7 @@
 
 #include <v8.h>
 #include <fstream>
-#include "fluff.h"
+#include "util.h"
 
 using namespace v8;
 using namespace std;
@@ -61,7 +61,18 @@ Handle<Script> loadScript(const char *filename) {
 }
 
 
-// Tuff ------------------------------------------------------------------------
+// V8 --------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+inline int ToInt32(Handle<Value> i) {
+    return i->Int32Value();
+}
+
+inline float ToFloat(Handle<Value> f) {
+    return static_cast<float>(f->NumberValue());
+}
+
+
+// Fluff -----------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 bool callFunction(const char *name, Handle<Value> *args, int argc) {
     HandleScope scope;

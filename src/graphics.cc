@@ -26,6 +26,7 @@
 #include <string>
 #include <math.h>
 #include "graphics.h"
+#include "util.h"
 #include "game.h"
 #include "fluff.h"
 
@@ -37,37 +38,40 @@ using namespace std;
 // -----------------------------------------------------------------------------
 const float PI = 3.14159;
 
-inline int ToInt32(Handle<Value> i) {
-    return i->Int32Value();
-}
-
-inline float ToFloat(Handle<Value> f) {
-    return static_cast<float>(f->NumberValue());
-}
-
-bool CheckNumbers(const Arguments& args, int count) {
-    if (args.Length() == count) {
-        for(int i = 0; i < count; i++) {
-            if (!args[i]->IsNumber()) {
-                return false;
-            }
-        }
-        return true;
-        
-    } else {
-        return false;
-    }
-}
-
 Handle<Value> GraphicsSetMode(const Arguments& args) {
-    if (args.Length() == 4 && args[0]->IsNumber()
-        && args[1]->IsNumber() && args[2]->IsString()
-        && args[3]->IsNumber()) {
+    bool created = false;
+    
+    // Width, Height, Fullscreen, VSync, FSAA
+    if (args.Length() == 5 && args[0]->IsNumber() && args[1]->IsNumber()
+        && args[2]->IsBoolean() && args[3]->IsBoolean() && args[4]->IsNumber()) {
         
-        String::Utf8Value title(args[2]->ToString());
-        GameCreate(ToInt32(args[0]), ToInt32(args[1]), *title, ToInt32(args[3]));
-    }
-    return Undefined();
+        GameCreate(ToInt32(args[0]), ToInt32(args[1]), args[2]->IsTrue(),
+                   args[3]->IsTrue(), ToInt32(args[4]));
+        
+        created = true;
+    
+    // Width, Height, Fullscreen, VSync, FSAA=4
+    } else if (args.Length() == 4 && args[0]->IsNumber() && args[1]->IsNumber()
+        && args[2]->IsBoolean() && args[3]->IsBoolean()) {
+        
+        GameCreate(ToInt32(args[0]), ToInt32(args[1]), args[2]->IsTrue(),
+                   args[3]->IsTrue(), 4);
+        
+        created = true;
+    
+    // Width, Height, Fullscreen, VSync=true, FSAA=4
+    } else if (args.Length() == 3 && args[0]->IsNumber() && args[1]->IsNumber()
+        && args[2]->IsBoolean()) {
+        
+        GameCreate(ToInt32(args[0]), ToInt32(args[1]), ToInt32(args[2]), true, 4);
+        created = true;
+    
+    // Width, Height, Fullscreen=false, VSync=true, FSAA=4
+    } else if (args.Length() == 2 && args[0]->IsNumber() && args[1]->IsNumber()) {
+        GameCreate(ToInt32(args[0]), ToInt32(args[1]), false, true, 4);
+        created = true;
+    }    
+    return Boolean::New(created);
 }
 
 Handle<Value> GraphicsSetFPS(const Arguments& args) {
@@ -76,6 +80,47 @@ Handle<Value> GraphicsSetFPS(const Arguments& args) {
         gameWindow.SetFramerateLimit(gameFPS);
     }
     return Undefined();
+}
+
+Handle<Value> GraphicsGetFPS(const Arguments& args) {
+    return Number::New(gameFPS);
+}
+
+Handle<Value> GraphicsSetPosition(const Arguments& args) {
+    if (args.Length() == 2) {
+         gameWindow.SetPosition(ToInt32(args[0]), ToInt32(args[1]));
+    }
+    return Undefined();
+}
+
+Handle<Value> GraphicsSetMouse(const Arguments& args) {
+    if (args.Length() == 1) {
+        gameCursor = args[0]->IsTrue();
+        gameWindow.ShowMouseCursor(gameCursor);
+    }
+    return Undefined();
+}
+
+Handle<Value> GraphicsGetMouse(const Arguments& args) {
+    return Boolean::New(gameCursor);
+}
+
+Handle<Value> GraphicsGetWidth(const Arguments& args) {
+    return Number::New(gameWindow.GetWidth());
+}
+
+Handle<Value> GraphicsGetHeight(const Arguments& args) {
+    return Number::New(gameWindow.GetHeight());
+}
+
+Handle<Value> GraphicsGetScreenWidth(const Arguments& args) {
+    sf::VideoMode dmode = sf::VideoMode::GetDesktopMode();
+    return Number::New(dmode.Width);
+}
+
+Handle<Value> GraphicsGetScreenHeight(const Arguments& args) {
+    sf::VideoMode dmode = sf::VideoMode::GetDesktopMode();
+    return Number::New(dmode.Height);
 }
 
 

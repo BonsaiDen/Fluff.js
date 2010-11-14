@@ -20,20 +20,27 @@
   
 */
 
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
-#include "graphics.h"
-#include "fluff.h"
+#include <v8.h>
 
+using namespace v8;
 using namespace std;
 
 
-// Game Runtime ----------------------------------------------------------------
-// -----------------------------------------------------------------------------
-void GameCreate(int width, int height, bool full, bool vsync, int fsaa);
-void GameSetCaption(const char *caption);
-void GameInitGL();
-void GameLoop();
-void GameEvents();
-Handle<Value> GameExit(const Arguments& args);
+// JavaScript ------------------------------------------------------------------
+Handle<Script> loadScript(const char *filename);
+void loadGame();
+
+
+// Fluff -----------------------------------------------------------------------
+bool callFunction(const char *name, Handle<Value> *args, int argc);
+void setupFluff();
+
+
+// V8 --------------------------------------------------------------------------
+inline int ToInt32(Handle<Value> i);
+inline float ToFloat(Handle<Value> f);
+
+
+// Objects ---------------------------------------------------------------------
+Handle<Value> log(const Arguments& args);
 

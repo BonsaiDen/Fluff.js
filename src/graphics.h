@@ -36,4 +36,42 @@ const char* ToUTF(Handle<Value> s);
 
 Handle<Value> GraphicsSetMode(const Arguments& args);
 Handle<Value> GraphicsSetFPS(const Arguments& args);
+Handle<Value> GraphicsGetFPS(const Arguments& args);
+Handle<Value> GraphicsSetPosition(const Arguments& args);
+Handle<Value> GraphicsSetMouse(const Arguments& args);
+Handle<Value> GraphicsGetMouse(const Arguments& args);
+Handle<Value> GraphicsGetWidth(const Arguments& args);
+Handle<Value> GraphicsGetHeight(const Arguments& args);
+Handle<Value> GraphicsGetScreenWidth(const Arguments& args);
+Handle<Value> GraphicsGetScreenHeight(const Arguments& args);
+
+
+// Settings --------------------------------------------------------------------
+Handle<Value> GraphicsSetBackgroundColor(const Arguments& args);
+Handle<Value> GraphicsClear(const Arguments& args);
+Handle<Value> GraphicsSetBlendMode(const Arguments& args);
+Handle<Value> GraphicsSetLineSmoothing(const Arguments& args);
+Handle<Value> GraphicsSetPolygonSmoothing(const Arguments& args);
+Handle<Value> GraphicsSetLineWidth(const Arguments& args);
+Handle<Value> GraphicsSetColor(const Arguments& args);
+
+
+// Shapes ----------------------------------------------------------------------
+Handle<Value> GraphicsLine(const Arguments& args);
+Handle<Value> GraphicsTriangle(const Arguments& args);
+Handle<Value> GraphicsTriangleFilled(const Arguments& args);
+Handle<Value> GraphicsCircle(const Arguments& args);
+Handle<Value> GraphicsCircleFilled(const Arguments& args);
+Handle<Value> GraphicsRectangle(const Arguments& args);
+Handle<Value> GraphicsRectangleFilled(const Arguments& args);
+Handle<Value> GraphicsPolygon(const Arguments& args);
+Handle<Value> GraphicsPolygonFilled(const Arguments& args);
+
+
+// Others ----------------------------------------------------------------------
+Handle<Value> GraphicsRotate(const Arguments& args);
+Handle<Value> GraphicsTranslate(const Arguments& args);
+Handle<Value> GraphicsScale(const Arguments& args);
+Handle<Value> GraphicsPush(const Arguments& args);
+Handle<Value> GraphicsPop(const Arguments& args);
 
