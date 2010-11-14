@@ -331,7 +331,7 @@ Handle<Value> GraphicsPop(const Arguments& args) {
 }
 
 Handle<Value> GraphicsReset(const Arguments& args) {
-    glReset();
+    glLoadIdentity();
     return Undefined();
 }
 
