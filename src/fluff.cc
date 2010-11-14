@@ -20,6 +20,12 @@
   
 */
 
+#define EXPOSE(obj, jsname, func) obj->Set(String::New(jsname), FunctionTemplate::New(func))
+#define OBJ_TEMPLATE(obj) Handle<ObjectTemplate> obj = ObjectTemplate::New()
+#define SET(obj, name, data) obj->Set(String::New(name), data)
+#define POBJECT(obj) Persistent<Object>::New(obj->NewInstance())
+#define FUNC_TEMPLATE(obj, func) Handle<FunctionTemplate> obj = FunctionTemplate::New(func);
+
 #include <v8.h>
 #include "fluff.h"
 #include "util.cc"
@@ -35,92 +41,91 @@ void setupFluff() {
     HandleScope scope;
     
     // Input
-    Handle<ObjectTemplate> inputTemplate = ObjectTemplate::New();
-    inputTemplate->Set(String::New("hasFocus"), FunctionTemplate::New(InputHasFocus));
-    inputTemplate->Set(String::New("hasMouse"), FunctionTemplate::New(InputHasMouse));
+    OBJ_TEMPLATE(inputTemplate);
+    EXPOSE(inputTemplate, "hasFocus", InputHasFocus);
+    EXPOSE(inputTemplate, "hasMouse", InputHasMouse);
     
-    inputTemplate->Set(String::New("getButtonReset"), FunctionTemplate::New(InputGetButtonReset));
-    inputTemplate->Set(String::New("setButtonReset"), FunctionTemplate::New(InputSetButtonReset));
+    EXPOSE(inputTemplate, "getButtonReset", InputGetButtonReset);
+    EXPOSE(inputTemplate, "setButtonReset", InputSetButtonReset);
     
-    inputTemplate->Set(String::New("getMouseDown"), FunctionTemplate::New(InputMouseDown));
-    inputTemplate->Set(String::New("getMouseUp"), FunctionTemplate::New(InputMouseUp));
-    inputTemplate->Set(String::New("getMouseClicked"), FunctionTemplate::New(InputMouseClicked));
+    EXPOSE(inputTemplate, "getMouseDown", InputMouseDown);
+    EXPOSE(inputTemplate, "getMouseUp", InputMouseUp);
+    EXPOSE(inputTemplate, "getMouseClicked", InputMouseClicked);
     
-    inputTemplate->Set(String::New("getMouseScrolled"), FunctionTemplate::New(InputMouseScrolled));
+    EXPOSE(inputTemplate, "getMouseScrolled", InputMouseScrolled);
     
-    inputTemplate->Set(String::New("getMouseX"), FunctionTemplate::New(InputMouseX));
-    inputTemplate->Set(String::New("getMouseY"), FunctionTemplate::New(InputMouseY));
+    EXPOSE(inputTemplate, "getMouseX", InputMouseX);
+    EXPOSE(inputTemplate, "getMouseY", InputMouseY);
     
-    inputTemplate->Set(String::New("getKeyReset"), FunctionTemplate::New(InputGetKeyReset));
-    inputTemplate->Set(String::New("setKeyReset"), FunctionTemplate::New(InputSetKeyReset));
+    EXPOSE(inputTemplate, "getKeyReset", InputGetKeyReset);
+    EXPOSE(inputTemplate, "setKeyReset", InputSetKeyReset);
     
-    inputTemplate->Set(String::New("getKeyDown"), FunctionTemplate::New(InputKeyDown));
-    inputTemplate->Set(String::New("getKeyUp"), FunctionTemplate::New(InputKeyUp));
-    inputTemplate->Set(String::New("getKeyPressed"), FunctionTemplate::New(InputKeyPressed));
+    EXPOSE(inputTemplate, "getKeyDown", InputKeyDown);
+    EXPOSE(inputTemplate, "getKeyUp", InputKeyUp);
+    EXPOSE(inputTemplate, "getKeyPressed", InputKeyPressed);
     
-    inputTemplate->Set(String::New("getControl"), FunctionTemplate::New(InputControl));
-    inputTemplate->Set(String::New("getShift"), FunctionTemplate::New(InputShift));
-    inputTemplate->Set(String::New("getAlt"), FunctionTemplate::New(InputAlt));
+    EXPOSE(inputTemplate, "getControl", InputControl);
+    EXPOSE(inputTemplate, "getShift", InputShift);
+    EXPOSE(inputTemplate, "getAlt", InputAlt);
     
     // Graphics
-    Handle<ObjectTemplate> graphicsTemplate = ObjectTemplate::New();
-    graphicsTemplate->Set(String::New("setMode"), FunctionTemplate::New(GraphicsSetMode));
-    graphicsTemplate->Set(String::New("setFPS"), FunctionTemplate::New(GraphicsSetFPS));
-    graphicsTemplate->Set(String::New("getFPS"), FunctionTemplate::New(GraphicsGetFPS)); 
-    graphicsTemplate->Set(String::New("setPosition"), FunctionTemplate::New(GraphicsSetPosition));
-    graphicsTemplate->Set(String::New("setMouse"), FunctionTemplate::New(GraphicsSetMouse));
-    graphicsTemplate->Set(String::New("getMouse"), FunctionTemplate::New(GraphicsGetMouse));
+    OBJ_TEMPLATE(graphicsTemplate);
+    EXPOSE(graphicsTemplate, "setMode", GraphicsSetMode);
+    EXPOSE(graphicsTemplate, "setFPS", GraphicsSetFPS);
+    EXPOSE(graphicsTemplate, "getFPS", GraphicsGetFPS); 
+    EXPOSE(graphicsTemplate, "setPosition", GraphicsSetPosition);
+    EXPOSE(graphicsTemplate, "setMouse", GraphicsSetMouse);
+    EXPOSE(graphicsTemplate, "getMouse", GraphicsGetMouse);
     
-    graphicsTemplate->Set(String::New("setBackgroundColor"), FunctionTemplate::New(GraphicsSetBackgroundColor));
-    graphicsTemplate->Set(String::New("clear"), FunctionTemplate::New(GraphicsClear));
+    EXPOSE(graphicsTemplate, "setBackgroundColor", GraphicsSetBackgroundColor);
+    EXPOSE(graphicsTemplate, "clear", GraphicsClear);
     
-    graphicsTemplate->Set(String::New("setBlendMode"), FunctionTemplate::New(GraphicsSetBlendMode));
-    graphicsTemplate->Set(String::New("setColor"), FunctionTemplate::New(GraphicsSetColor));
+    EXPOSE(graphicsTemplate, "setBlendMode", GraphicsSetBlendMode);
+    EXPOSE(graphicsTemplate, "setColor", GraphicsSetColor);
     
-    graphicsTemplate->Set(String::New("setPolygonSmoothing"), FunctionTemplate::New(GraphicsSetPolygonSmoothing));
+    EXPOSE(graphicsTemplate, "setPolygonSmoothing", GraphicsSetPolygonSmoothing);
     
-    graphicsTemplate->Set(String::New("setLineWidth"), FunctionTemplate::New(GraphicsSetLineWidth));
-    graphicsTemplate->Set(String::New("setLineSmoothing"), FunctionTemplate::New(GraphicsSetLineSmoothing));
+    EXPOSE(graphicsTemplate, "setLineWidth", GraphicsSetLineWidth);
+    EXPOSE(graphicsTemplate, "setLineSmoothing", GraphicsSetLineSmoothing);
     
-    graphicsTemplate->Set(String::New("line"), FunctionTemplate::New(GraphicsLine));    
+    EXPOSE(graphicsTemplate, "line", GraphicsLine);
     
-    graphicsTemplate->Set(String::New("circle"), FunctionTemplate::New(GraphicsCircle));
-    graphicsTemplate->Set(String::New("circleFilled"), FunctionTemplate::New(GraphicsCircleFilled));
+    EXPOSE(graphicsTemplate, "circle", GraphicsCircle);
+    EXPOSE(graphicsTemplate, "circleFilled", GraphicsCircleFilled);
     
-    graphicsTemplate->Set(String::New("triangle"), FunctionTemplate::New(GraphicsTriangle));
-    graphicsTemplate->Set(String::New("triangleFilled"), FunctionTemplate::New(GraphicsTriangleFilled)); 
+    EXPOSE(graphicsTemplate, "triangle", GraphicsTriangle);
+    EXPOSE(graphicsTemplate, "triangleFilled", GraphicsTriangleFilled);
     
-    graphicsTemplate->Set(String::New("rectangle"), FunctionTemplate::New(GraphicsRectangle));
-    graphicsTemplate->Set(String::New("rectangleFilled"), FunctionTemplate::New(GraphicsRectangleFilled)); 
+    EXPOSE(graphicsTemplate, "rectangle", GraphicsRectangle);
+    EXPOSE(graphicsTemplate, "rectangleFilled", GraphicsRectangleFilled);
     
-    graphicsTemplate->Set(String::New("polygon"), FunctionTemplate::New(GraphicsPolygon));
-    graphicsTemplate->Set(String::New("polygonFilled"), FunctionTemplate::New(GraphicsPolygonFilled)); 
+    EXPOSE(graphicsTemplate, "polygon", GraphicsPolygon);
+    EXPOSE(graphicsTemplate, "polygonFilled", GraphicsPolygonFilled);
     
-    graphicsTemplate->Set(String::New("rotate"), FunctionTemplate::New(GraphicsRotate));
-    graphicsTemplate->Set(String::New("translate"), FunctionTemplate::New(GraphicsTranslate));
-    graphicsTemplate->Set(String::New("scale"), FunctionTemplate::New(GraphicsScale));
+    EXPOSE(graphicsTemplate, "rotate", GraphicsRotate);
+    EXPOSE(graphicsTemplate, "translate", GraphicsTranslate);
+    EXPOSE(graphicsTemplate, "scale", GraphicsScale);
     
-    graphicsTemplate->Set(String::New("push"), FunctionTemplate::New(GraphicsPush));
-    graphicsTemplate->Set(String::New("pop"), FunctionTemplate::New(GraphicsPop)); 
-    graphicsTemplate->Set(String::New("reset"), FunctionTemplate::New(GraphicsReset)); 
+    EXPOSE(graphicsTemplate, "push", GraphicsPush);
+    EXPOSE(graphicsTemplate, "pop", GraphicsPop);
+    EXPOSE(graphicsTemplate, "reset", GraphicsReset);
     
     // Input
-    input = Persistent<Object>::New(inputTemplate->NewInstance());
+    input = POBJECT(inputTemplate);
     
     // Fluff
-    Handle<ObjectTemplate> fluffTemplate = ObjectTemplate::New();
-    fluffTemplate->Set(String::New("log"), FunctionTemplate::New(log));
-    fluffTemplate->Set(String::New("exit"), FunctionTemplate::New(GameExit));
+    OBJ_TEMPLATE(fluffTemplate);
+    EXPOSE(fluffTemplate, "log", log);
+    EXPOSE(fluffTemplate, "exit", GameExit);
+    fluff = POBJECT(fluffTemplate);
     
-    fluff = Persistent<Object>::New(fluffTemplate->NewInstance());
-    fluff->Set(String::New("graphics"), Persistent<Object>::New(graphicsTemplate->NewInstance()));
-    fluff->Set(String::New("input"), input);
-    
-    Handle<FunctionTemplate> requireTemplate = FunctionTemplate::New(requireScript);
+    SET(fluff, "graphics", POBJECT(graphicsTemplate));
+    SET(fluff, "input", input);
     
     // Global
-    global->Set(String::New("fluff"), fluff);
-    global->Set(String::New("require"), requireTemplate->GetFunction());
+    FUNC_TEMPLATE(requireTemplate, requireScript);
+    SET(global, "fluff", fluff);
+    SET(global, "require", requireTemplate->GetFunction());
 }
 
 
