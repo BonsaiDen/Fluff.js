@@ -36,8 +36,7 @@ bool callSimpleEvent(const char *name) {
     
     if (object->IsFunction()) {
         Handle<Function> func = Handle<Function>::Cast(object);
-        Handle<Value> args[0];
-        func->Call(fluff, 0, args);
+        func->Call(fluff, 0, NULL);
         return true;
     
     } else {

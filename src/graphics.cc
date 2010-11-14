@@ -279,7 +279,7 @@ Handle<Value> GraphicsPolygon(const Arguments& args) {
     HandleScope scope;
     Handle<Array> points = Handle<Array>::Cast(args[0]);
     glBegin(GL_LINE_LOOP);
-    for(int i = 0; i < points->Length(); i += 2) {
+    for(unsigned int i = 0; i < points->Length(); i += 2) {
         glVertex2f(ToFloat(points->Get(Number::New(i))),
                    ToFloat(points->Get(Number::New(i + 1))));
     }
@@ -291,7 +291,7 @@ Handle<Value> GraphicsPolygonFilled(const Arguments& args) {
     HandleScope scope;
     Handle<Array> points = Handle<Array>::Cast(args[0]);
     glBegin(GL_POLYGON);
-    for(int i = 0; i < points->Length(); i += 2) {
+    for(unsigned int i = 0; i < points->Length(); i += 2) {
         glVertex2f(ToFloat(points->Get(Number::New(i))),
                    ToFloat(points->Get(Number::New(i + 1))));
     }

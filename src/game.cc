@@ -72,7 +72,6 @@ void GameLoop() {
     HandleScope scope;
     Handle<Number> delta;
     Handle<Value> args[1];
-    Handle<Value> vargs[0];
     
     resetInput();
     while (gameRunning) {
@@ -81,10 +80,10 @@ void GameLoop() {
         delta = Number::New(gameWindow.GetFrameTime());
         args[0] = delta;
         callFunction("onUpdate", args, 1);
-        callFunction("onDraw", vargs, 0);
+        callFunction("onDraw", NULL, 0);
         gameWindow.Display();
     }
-    callFunction("onExit", vargs, 0);
+    callFunction("onExit", NULL, 0);
     gameWindow.Close();
 }
 
@@ -199,5 +198,6 @@ void GameEvents() {
 
 Handle<Value> GameExit(const Arguments& args) {
     gameRunning = false;
+    return Undefined();
 }
 

@@ -134,8 +134,7 @@ int main(int argc, char* argv[]) {
     setupFluff();
     
     loadGame();
-    Handle<Value> args[0];
-    callFunction("onLoad", args, 0);
+    callFunction("onLoad", NULL, 0);
     
     if (gameRunning) {
         GameLoop();

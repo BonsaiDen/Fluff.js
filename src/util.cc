@@ -99,6 +99,7 @@ Handle<Value> executeScript(Handle<Script> script) {
     Handle<Value> result = script->Run();
     if (result.IsEmpty()) {
         handleException(&tryCatch);
+        return Undefined();
     
     } else {
         return scope.Close(result);
