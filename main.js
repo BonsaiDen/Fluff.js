@@ -9,9 +9,7 @@ fluff.onLoad = function() {
     fluff.graphics.setBackgroundColor(0, 0, 0);
 };
 
-fluff.onUpdate = function(dt) {
-    //fluff.log(dt);
-    
+fluff.onUpdate = function(dt) {    
     if (fluff.input.getMouseDown(0)) {
         fluff.log('mouse down!');
     }
@@ -44,7 +42,10 @@ fluff.onUpdate = function(dt) {
 
 fluff.onDraw = function() {
     fluff.graphics.clear();
- //   for(var i = 0; i < 100; i++) {
+    
+    for(var i = 0; i < 100; i++) {
+        fluff.graphics.push();
+        fluff.graphics.translate(Math.random() * 100, Math.random() * 100);
         fluff.graphics.setColor(255, 0, 0);
         fluff.graphics.triangle(100, 0, 50, 200, 150, 200);
         fluff.graphics.setColor(0, 255, 0);
@@ -52,7 +53,8 @@ fluff.onDraw = function() {
         fluff.graphics.setColor(255, 255, 0);
         fluff.graphics.setColor(0, 255, 255);
         fluff.graphics.rectangleFilled(10, 10, 100, 50);
-//    }
+        fluff.graphics.pop();
+    }
 };
 
 fluff.onExit = function() {
