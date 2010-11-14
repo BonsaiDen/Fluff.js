@@ -330,3 +330,8 @@ Handle<Value> GraphicsPop(const Arguments& args) {
     return Undefined();
 }
 
+Handle<Value> GraphicsReset(const Arguments& args) {
+    glReset();
+    return Undefined();
+}
+

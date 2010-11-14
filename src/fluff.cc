@@ -102,7 +102,7 @@ void setupFluff() {
     
     graphicsTemplate->Set(String::New("push"), FunctionTemplate::New(GraphicsPush));
     graphicsTemplate->Set(String::New("pop"), FunctionTemplate::New(GraphicsPop)); 
-    
+    graphicsTemplate->Set(String::New("reset"), FunctionTemplate::New(GraphicsReset)); 
     
     // Input
     input = Persistent<Object>::New(inputTemplate->NewInstance());

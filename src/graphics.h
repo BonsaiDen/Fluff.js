@@ -74,4 +74,5 @@ Handle<Value> GraphicsTranslate(const Arguments& args);
 Handle<Value> GraphicsScale(const Arguments& args);
 Handle<Value> GraphicsPush(const Arguments& args);
 Handle<Value> GraphicsPop(const Arguments& args);
+Handle<Value> GraphicsReset(const Arguments& args);
 
