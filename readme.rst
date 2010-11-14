@@ -3,21 +3,39 @@ Fluff.js
 
 **Fluff.js** is a 2D Game Engine created using SFML, OpenGL and V8.
 
-Right now it's just a proof of concept, actual drawing code will follow in the next days.
+
+Compiling
+---------
+
+| First make sure you got V8 and SFML(and I guess OpenGL).  
+| Then just run the make script, you can also pass `-r` for optimizations.
 
 
 Todo
 ----
 
-- Event based input
-- WebSocket support(Let's hook it up to Node.js!)
-- More advanced drawing functions
-- Audio
+**Input**
+    
+    - More events
+    - Provide key mappings for getKey*
+    - Provide List functions for get*Down etc.
 
-- Allow for multiple setModes
-- allow for fullscreen
-- Esc exits
+**Networking**
 
+    - Add WebSocket support, let's hook this up to Node.js! :D
+
+**Grahpics**
+    
+  - More advanced OpenGL thingies
+
+**Audio**
+
+    - Sounds & Music
+
+**General**
+    
+    - Allow for setting the window caption and position(needs SFML hacks)
+    - Let one retrieve a list of display modes
 
 
 License
