@@ -14,6 +14,10 @@ Todo
 - More advanced drawing functions
 - Audio
 
+- Allow for multiple setModes
+- allow for fullscreen
+- Esc exits
+
 
 
 License

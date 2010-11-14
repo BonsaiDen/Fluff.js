@@ -22,6 +22,8 @@
 
 #include <v8.h>
 #include <fstream>
+#include <string>
+#include <stdio.h>
 #include "util.h"
 
 using namespace v8;
@@ -32,15 +34,23 @@ using namespace std;
 // -----------------------------------------------------------------------------
 void loadGame() {
     HandleScope scope;
-    Handle<Script> script = loadScript("main.js");
-    Handle<Value> result = script->Run();
+    executeScript(loadScript("main"));
 }
 
-Handle<Script> loadScript(const char *filename) {
-    HandleScope scope;
-    Handle<String> source = String::New("fluff.log('Could not find \"main.js\"')");
-    ifstream file(filename);
+Handle<Script> loadScript(const char *name) {
     
+    // Create filename
+    string filename(name);
+    filename.append(".js");
+    
+    // Handles
+    HandleScope scope;
+    Handle<Script> script;
+    Handle<String> source;
+    TryCatch tryCatch;
+    
+    // Load File
+    ifstream file(filename.data());
     if (file.is_open()) {
         file.seekg(0, ios::end);
         ifstream::pos_type size = file.tellg();
@@ -51,13 +61,83 @@ Handle<Script> loadScript(const char *filename) {
         file.close();
         source = String::New(data, size); 
         delete[] data;
+    
+    } else {
+        printf("Error: Could not find module \"%s\"\n", name);
+        script = Script::Compile(String::New("undefined"), String::New(filename.data()));
+        return scope.Close(script);
     }
     
-    if (source.IsEmpty()) {
-        source = String::New("fluff.log('Error loading \"main.js\".')");
+    // Wrap it!
+    Handle<String> pre = String::New("(function() {var exports = {}; (function(exports) {\n");
+    Handle<String> end = String::New("\n})(exports); return exports; })();");    
+    Handle<String> wrapped = String::Concat(String::Concat(pre, source), end);
+    
+    script = Script::Compile(wrapped, String::New(filename.data()));
+    if (script.IsEmpty()) {
+        printf("Error: Could not load module \"%s\"\n", name);
+        handleException(&tryCatch);
+        script = Script::Compile(String::New("undefined"), String::New(filename.data()));
     }
-    Handle<Script> script = Script::Compile(source, String::New(filename));
     return scope.Close(script);
+}
+
+Handle<Value> requireScript(const Arguments& args) {
+    HandleScope scope;
+    if (args.Length() == 1) {
+        String::Utf8Value name(args[0]->ToString());
+        return scope.Close(executeScript(loadScript(*name)));
+
+    } else {
+        return Undefined();
+    }
+}
+
+Handle<Value> executeScript(Handle<Script> script) {
+    HandleScope scope;
+    TryCatch tryCatch;
+    Handle<Value> result = script->Run();
+    if (result.IsEmpty()) {
+        handleException(&tryCatch);
+    
+    } else {
+        return scope.Close(result);
+    }
+}
+
+void handleException(TryCatch* tryCatch) {
+    HandleScope scope;
+    String::Utf8Value exception(tryCatch->Exception());
+    Handle<Message> message = tryCatch->Message();
+    if (message.IsEmpty()) {
+        printf("%s\n", *exception);
+    
+    } else {
+    
+        // Filename, line, message
+        String::Utf8Value filename(message->GetScriptResourceName());
+        int line = message->GetLineNumber();
+        printf("%s:%i: %s\n", *filename, line, *exception);
+        
+        // Sourceline
+        String::Utf8Value sourceLine(message->GetSourceLine());
+        printf("%s\n", *sourceLine);
+        
+        int start = message->GetStartColumn(), end = message->GetEndColumn();
+        for(int i = 0; i < start; i++) {
+            printf(" ");
+        }
+        for(int i = start; i < end; i++) {
+            printf("^");
+        }
+        printf("\n");
+        
+        // Stack Trace
+        String::Utf8Value stackTrace(tryCatch->StackTrace());
+        if (stackTrace.length() > 0) {
+            printf("%s\n", *stackTrace);
+        } 
+    }
 }
 
 
@@ -86,5 +166,23 @@ bool callFunction(const char *name, Handle<Value> *args, int argc) {
     } else {
         return false;
     }
+}
+
+Handle<Value> log(const Arguments& args) {
+    bool first = true;
+    for (int i = 0; i < args.Length(); i++) {
+        HandleScope handle_scope;
+        if (first) {
+            first = false;
+        
+        } else {
+            printf(" ");
+        }
+        
+        String::AsciiValue str(args[i]);
+        printf("%s", *str);
+    }
+    printf("\n");
+    return Undefined();
 }
 

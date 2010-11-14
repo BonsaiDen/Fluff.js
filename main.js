@@ -1,9 +1,10 @@
 
+var test = require('foo');
+
 
 // Fluff Example program thingy ------------------------------------------------
 // -----------------------------------------------------------------------------
 fluff.onLoad = function() {
-    fluff.log('loaded!');
     fluff.graphics.setMode(480, 320);
     fluff.graphics.setBackgroundColor(0, 0, 0);
 };
@@ -55,7 +56,6 @@ fluff.onDraw = function() {
 };
 
 fluff.onExit = function() {
-    fluff.log('exited!');
 };
 
 
