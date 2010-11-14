@@ -66,6 +66,7 @@ void GameInitGL() {
     glDisable(GL_DEPTH_TEST);
     glClearColor(0.f, 0.f, 0.f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_MULTISAMPLE);
 }
 
 void GameLoop() {
