@@ -100,8 +100,8 @@ void setupFluff() {
     graphicsTemplate->Set(String::New("translate"), FunctionTemplate::New(GraphicsTranslate));
     graphicsTemplate->Set(String::New("scale"), FunctionTemplate::New(GraphicsScale));
     
-    graphicsTemplate->Set(String::New("push"), FunctionTemplate::New(GraphicsTranslate));
-    graphicsTemplate->Set(String::New("pop"), FunctionTemplate::New(GraphicsScale)); 
+    graphicsTemplate->Set(String::New("push"), FunctionTemplate::New(GraphicsPush));
+    graphicsTemplate->Set(String::New("pop"), FunctionTemplate::New(GraphicsPop)); 
     
     
     // Input
