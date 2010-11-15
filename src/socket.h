@@ -24,48 +24,43 @@
 #include <SFML/System.hpp>
 #include <SFML/Network.hpp>
 
+#include "wrap.h"
 #include <string>
 #include <iostream>
 
 using namespace std;
 
 
-// Socket -------------------------------------------------------------------
+// Socket ----------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-#ifndef Socket_H
-#define Socket_H
+#ifndef SOCKET_H
+#define SOCKET_H
 
-class Socket {
-    public:
+class Socket: WrappedClass {
+    private:
         string host;
         int port;
-        
         vector< Local<String> > sendQueue;
         
+    public: 
         // 0 = Waiting for connection, 1 = Connected, 2 = pending, 3 = closed
         int status;
-        Persistent<Object> self;
-        
         sf::SocketTCP socket;
+        
         Socket(string host, int port);
         void connect();
         void handle();
         void call(const char *name, Handle<Value> *args, int argc);
         void close();
+        void destroy();
         
+        static Handle<Value> create(const Arguments& args); 
         static Handle<Value> send(const Arguments& args);
         static Handle<Value> close(const Arguments& args);
-        
-        static Handle<Value> wrap(const Arguments& args);
-        static void unwrap(Persistent<Value> value, void *parameter);
 
 };
 
 vector<Socket*> sockets;
 
 #endif
-
-
-
-
 

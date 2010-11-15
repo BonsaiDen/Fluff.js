@@ -20,6 +20,8 @@
   
 */
 
+#define SOCKET_UNWRAP(obj) (Socket*)External::Unwrap(obj->ToObject()->GetInternalField(0));
+
 #include <v8.h>
 #include <SFML/System.hpp>
 #include <SFML/Network.hpp>
@@ -29,6 +31,9 @@
 #include "socket.h"
 
 using namespace std;
+
+
+
 
 
 // Socket -------------------------------------------------------------------
@@ -65,6 +70,7 @@ void Socket::call(const char *name, Handle<Value> *args, int argc) {
 
 void Socket::handle() {
     if ((status == 2 || status == 1) && socket.IsValid()) {
+        HandleScope scope;
         
         // Send queued data
         if (status == 1) {
@@ -117,7 +123,7 @@ void Socket::handle() {
 }
 
 Handle<Value> Socket::send(const Arguments& args) {
-    Socket *socket = (Socket*)External::Unwrap(args.This()->ToObject()->GetInternalField(0));
+    Socket *socket = WrappedClass::unwrap<Socket>(args.This());
     if (socket->status != 3) {
         cout << "adding data" << endl;
         socket->sendQueue.push_back(args[0]->ToString());
@@ -129,7 +135,7 @@ Handle<Value> Socket::send(const Arguments& args) {
 }
 
 Handle<Value> Socket::close(const Arguments& args) {
-    Socket *socket = (Socket*)External::Unwrap(args.This()->ToObject()->GetInternalField(0));
+    Socket *socket = WrappedClass::unwrap<Socket>(args.This());
     if (socket->status == 1) {
         socket->close();
         return Boolean::New(true);
@@ -147,39 +153,27 @@ void Socket::close() {
     }
 }
 
-Handle<Value> Socket::wrap(const Arguments& args) {
+Handle<Value> Socket::create(const Arguments& args) {
     HandleScope scope;
     if (args.IsConstructCall()) {
         String::Utf8Value host(args[0]->ToString());
         Socket *socket = new Socket(string(*host), ToInt32(args[1]));
         
-   
-        Handle<ObjectTemplate> object = ObjectTemplate::New();
-        object->SetInternalFieldCount(1);
-        
-        Persistent<ObjectTemplate> classTemplate;
-        classTemplate = Persistent<ObjectTemplate>::New(object);
-        classTemplate->Set(String::New("send"), FunctionTemplate::New(Socket::send));
-        
-        Handle<Object> result = classTemplate->NewInstance();
-        result->SetInternalField(0, External::New(socket));
-        
-        socket->self = Persistent<Object>::New(scope.Close(result));
-        socket->self.MakeWeak(socket, unwrap); // TODO MAKE THIS WORK(!!!!!)
-        return socket->self;
+        Persistent<ObjectTemplate> tmp = socket->createTemplate();
+        tmp->Set(String::New("send"), FunctionTemplate::New(Socket::send));
+        return socket->wrap(tmp);
     
     } else {
         return Undefined();
     }
 }
 
-void Socket::unwrap(Persistent<Value> value, void *parameter) {
-    Socket *socket = (Socket*)External::Unwrap(value->ToObject()->GetInternalField(0));
+void Socket::destroy() {
     for(unsigned int i = 0; i < sockets.size(); i++) {
         Socket *csocket = sockets.at(i);
-        if (csocket == socket) {
+        if (csocket == this) {
             sockets.erase(sockets.begin() + i);
-            delete socket;
+            delete this;
             break;
         }
     }

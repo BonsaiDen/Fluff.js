@@ -124,7 +124,7 @@ void setupFluff() {
     
     // Global
     FUNC_TEMPLATE(requireTemplate, requireScript);
-    FUNC_TEMPLATE(webSocketTemplate, Socket::wrap);
+    FUNC_TEMPLATE(webSocketTemplate, Socket::create);
     SET(global, "global", global);
     SET(global, "fluff", fluff);
     SET(global, "require", requireTemplate->GetFunction());
