@@ -74,11 +74,26 @@ void Socket::handle() {
         
         // Send queued data
         if (status == 1) {
+        
+            // send every item, if one fails break and try again on the next frame
             for(unsigned int i = 0; i < sendQueue.size(); i++) {
-                cout << "sending data" << endl;
-                String::Utf8Value str(sendQueue.at(i));
+                Persistent<String> data = sendQueue.at(i);
+                int byteLength = data->Utf8Length();
+                cout << byteLength << endl;
+                char *buffer = (char*)malloc(byteLength);;
+                data->WriteUtf8(buffer, -1);
+                if (socket.Send(buffer, byteLength) == sf::Socket::Done) {
+                    free(buffer);
+                    data.Dispose();
+                    sendQueue.erase(sendQueue.begin() + i);
+                    i--;
+                
+                } else {
+                    cout << "sending failed" << endl;
+                    free(buffer);
+                    break;
+                }
             }
-            sendQueue.clear();
         }
     
         // Receive data
@@ -124,9 +139,8 @@ void Socket::handle() {
 
 Handle<Value> Socket::send(const Arguments& args) {
     Socket *socket = WrappedClass::unwrap<Socket>(args.This());
-    if (socket->status != 3) {
-        cout << "adding data" << endl;
-        socket->sendQueue.push_back(args[0]->ToString());
+    if (socket->status != 3 && args[0]->IsString()) {
+        socket->sendQueue.push_back(Persistent<String>::New(args[0]->ToString()));
         return Boolean::New(true);
     
     } else {

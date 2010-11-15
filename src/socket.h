@@ -40,7 +40,7 @@ class Socket: WrappedClass {
     private:
         string host;
         int port;
-        vector< Local<String> > sendQueue;
+        vector< Persistent<String> > sendQueue;
         
     public: 
         // 0 = Waiting for connection, 1 = Connected, 2 = pending, 3 = closed
