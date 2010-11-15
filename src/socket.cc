@@ -23,21 +23,34 @@
 #define SOCKET_UNWRAP(obj) (Socket*)External::Unwrap(obj->ToObject()->GetInternalField(0));
 
 #include <v8.h>
-#include <SFML/System.hpp>
 #include <SFML/Network.hpp>
-
 #include <string>
-#include <iostream>
+#include "util.h"
 #include "socket.h"
 
-using namespace std;
+using namespace v8;
 
 
-
-
-
-// Socket -------------------------------------------------------------------
+// Socket ----------------------------------------------------------------------
 // -----------------------------------------------------------------------------
+Handle<Value> Socket::create(const Arguments& args) {
+    HandleScope scope;
+    if (args.IsConstructCall()) {
+        String::Utf8Value host(args[0]->ToString());
+        Socket *socket = new Socket(string(*host), ToInt32(args[1]));
+        
+        if (!socket->hasTemplate()) {
+            Persistent<ObjectTemplate> tmp = socket->createTemplate();
+            tmp->Set(String::New("send"), FunctionTemplate::New(Socket::send));
+            tmp->Set(String::New("close"), FunctionTemplate::New(Socket::close));            
+        }
+        return socket->wrap();
+    
+    } else {
+        return Undefined();
+    }
+}
+
 Socket::Socket(string host, int port) {
     status = 0;
     this->host = host;
@@ -79,7 +92,6 @@ void Socket::handle() {
             for(unsigned int i = 0; i < sendQueue.size(); i++) {
                 Persistent<String> data = sendQueue.at(i);
                 int byteLength = data->Utf8Length();
-                cout << byteLength << endl;
                 char *buffer = (char*)malloc(byteLength);;
                 data->WriteUtf8(buffer, -1);
                 if (socket.Send(buffer, byteLength) == sf::Socket::Done) {
@@ -89,7 +101,6 @@ void Socket::handle() {
                     i--;
                 
                 } else {
-                    cout << "sending failed" << endl;
                     free(buffer);
                     break;
                 }
@@ -99,28 +110,29 @@ void Socket::handle() {
         // Receive data
         char buf[1024];
         size_t received;
-        
         sf::Socket::Status result = socket.Receive(buf, sizeof(buf), received);
+        
+        Handle<Value> args[1];
         switch (result) {
             case sf::Socket::Done:
-                if (received > 0 && status == 1) {
-                    Handle<Value> args[1];
-                    args[0] = String::New(buf);
-                    call("onData", args, 1);
+                if (status == 2) {
+                    status = 1;
+                    args[0] = Boolean::New(true);
+                    call("onConnect", args, 1);
                 }
+                args[0] = String::New(buf, received);
+                call("onData", args, 1);
                 break;
             
             case sf::Socket::Error:
                 status = 3;
                 socket.Close();
                 call("onError", NULL, 0);
-                cout << "Socket Error" << endl;
                 break;
             
             case sf::Socket::NotReady:
                 if (status == 2) {
                     status = 1;
-                    Handle<Value> args[1];
                     args[0] = Boolean::New(true);
                     call("onConnect", args, 1);
                 }
@@ -128,7 +140,6 @@ void Socket::handle() {
             
             case sf::Socket::Disconnected:
                 close();
-                cout << "Socket Disconnected" << endl;
                 break;
             
             default:
@@ -164,21 +175,6 @@ void Socket::close() {
         status = 3;
         socket.Close();
         call("onClose", NULL, 0);
-    }
-}
-
-Handle<Value> Socket::create(const Arguments& args) {
-    HandleScope scope;
-    if (args.IsConstructCall()) {
-        String::Utf8Value host(args[0]->ToString());
-        Socket *socket = new Socket(string(*host), ToInt32(args[1]));
-        
-        Persistent<ObjectTemplate> tmp = socket->createTemplate();
-        tmp->Set(String::New("send"), FunctionTemplate::New(Socket::send));
-        return socket->wrap(tmp);
-    
-    } else {
-        return Undefined();
     }
 }
 

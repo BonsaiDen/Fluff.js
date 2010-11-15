@@ -25,7 +25,6 @@
 #include "fluff.h"
 
 using namespace v8;
-using namespace std;
 
 
 // Input ----------------------------------------------------------------------

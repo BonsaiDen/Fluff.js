@@ -23,10 +23,10 @@
 #include <v8.h>
 
 using namespace v8;
-using namespace std;
 
+#ifndef UTIL_H
+#define UTIL_H
 
-// JavaScript ------------------------------------------------------------------
 Handle<Script> loadScript(const char *name);
 Handle<Value> requireScript(const Arguments& args);
 Handle<Value> executeScript(Handle<Script> script);
@@ -34,6 +34,12 @@ Handle<Value> log(const Arguments& args);
 void handleException(TryCatch* tryCatch);
 bool callFunction(const char *name, Handle<Value> *args, int argc);
 
-inline int ToInt32(Handle<Value> i);
-inline float ToFloat(Handle<Value> f);
+inline int ToInt32(Handle<Value> i) {
+    return i->Int32Value();
+}
 
+inline float ToFloat(Handle<Value> f) {
+    return static_cast<float>(f->NumberValue());
+}
+
+#endif

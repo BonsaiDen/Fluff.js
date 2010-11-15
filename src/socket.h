@@ -21,13 +21,11 @@
 */
 
 #include <v8.h>
-#include <SFML/System.hpp>
 #include <SFML/Network.hpp>
-
-#include "wrap.h"
 #include <string>
-#include <iostream>
+#include "wrap.h"
 
+using namespace v8;
 using namespace std;
 
 
@@ -38,21 +36,23 @@ using namespace std;
 
 class Socket: WrappedClass {
     private:
-        string host;
         int port;
+        string host;
         vector< Persistent<String> > sendQueue;
         
-    public: 
-        // 0 = Waiting for connection, 1 = Connected, 2 = pending, 3 = closed
-        int status;
         sf::SocketTCP socket;
+        void call(const char *name, Handle<Value> *args, int argc);
+    
+    protected:
+        void destroy();
+    
+    public:
+        int status;
         
         Socket(string host, int port);
         void connect();
         void handle();
-        void call(const char *name, Handle<Value> *args, int argc);
         void close();
-        void destroy();
         
         static Handle<Value> create(const Arguments& args); 
         static Handle<Value> send(const Arguments& args);

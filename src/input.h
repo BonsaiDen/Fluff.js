@@ -24,13 +24,13 @@
 #include "fluff.h"
 
 using namespace v8;
-using namespace std;
 
 
 // Input ----------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 bool callSimpleEvent(const char *name);
 void resetButtons(bool old);
+void resetKeys(bool old);
 void resetInput();
 void updateInput();
 

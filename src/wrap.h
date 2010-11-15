@@ -21,7 +21,8 @@
 */
 
 #include <v8.h>
-using namespace std;
+
+using namespace v8;
 
 
 // Class Wrapper ---------------------------------------------------------------
@@ -53,23 +54,33 @@ class WrappedClass {
             WrappedClass::destroy(cls);
         }
     
-    protected:
+    protected:     
         Persistent<Object> self;
+        Persistent<ObjectTemplate> classTemplate;
+        bool classTemplateCreated; 
         
-        inline Persistent<ObjectTemplate> createTemplate() {
-            Handle<ObjectTemplate> object = ObjectTemplate::New();
-            object->SetInternalFieldCount(1);
-            return Persistent<ObjectTemplate>::New(object);
+        inline bool hasTemplate() {
+            return classTemplateCreated;
         }
         
-        inline Persistent<Object> wrap(Persistent<ObjectTemplate> tmp) {
+        inline Persistent<ObjectTemplate> createTemplate() {
+            if (!hasTemplate()) {
+                Handle<ObjectTemplate> object = ObjectTemplate::New();
+                object->SetInternalFieldCount(1);
+                classTemplate = Persistent<ObjectTemplate>::New(object);  
+                classTemplateCreated = true;
+            }
+            return classTemplate;
+        }
+        
+        inline Persistent<Object> wrap() {
             HandleScope scope;
-            Handle<Object> result = tmp->NewInstance();
+            Handle<Object> result = classTemplate->NewInstance();
             result->SetInternalField(0, External::New(this));
             
-            this->self = Persistent<Object>::New(scope.Close(result));
-            this->self.MakeWeak(this, collect);
-            return this->self;
+            self = Persistent<Object>::New(scope.Close(result));
+            self.MakeWeak(this, collect);
+            return self;
         }
 };
 #endif

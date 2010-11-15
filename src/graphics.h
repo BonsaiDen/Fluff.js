@@ -21,12 +21,8 @@
 */
 
 #include <v8.h>
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
-#include "fluff.h"
 
 using namespace v8;
-using namespace std;
 
 
 // Graphics --------------------------------------------------------------------

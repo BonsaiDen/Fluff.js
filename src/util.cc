@@ -37,7 +37,7 @@ Handle<Value> requireScript(const Arguments& args) {
     if (args.Length() == 1) {
         String::Utf8Value name(args[0]->ToString());
         return scope.Close(executeScript(loadScript(*name)));
-
+    
     } else {
         return Undefined();
     }
@@ -112,7 +112,7 @@ Handle<Value> log(const Arguments& args) {
             printf(" ");
         }
         
-        String::AsciiValue str(args[i]);
+        String::Utf8Value str(args[i]);
         printf("%s", *str);
     }
     printf("\n");
@@ -166,13 +166,5 @@ bool callFunction(const char *name, Handle<Value> *args, int argc) {
     } else {
         return false;
     }
-}
-
-inline int ToInt32(Handle<Value> i) {
-    return i->Int32Value();
-}
-
-inline float ToFloat(Handle<Value> f) {
-    return static_cast<float>(f->NumberValue());
 }
 

@@ -21,7 +21,6 @@
 */
 
 #include <v8.h>
-#include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <string>
 #include <math.h>

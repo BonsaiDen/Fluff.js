@@ -20,14 +20,14 @@
   
 */
 
-#include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include "graphics.h"
 #include "game.h"
 #include "input.h"
 #include "socket.h"
+#include "util.h"
 #include "fluff.h"
-#include <iostream>
+
 using namespace v8;
 using namespace std;
 
@@ -147,11 +147,8 @@ void GameEvents(void) {
                     gameRunning = false;
                     gameReload = true;
                 }
-                
-                
                 gameKeys[event.Key.Code] = 1;
                 
-                cout << event.Key.Code << endl;
                 if (event.Key.Code == sf::Key::LControl
                     || event.Key.Code == sf::Key::RControl) {
                     

@@ -35,10 +35,11 @@
 #include "game.cc"
 
 using namespace v8;
-using namespace std;
 
 
-void setupFluff() {
+// Fluff.js --------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+void initFluff() {
     HandleScope scope;
     
     // Input
@@ -137,15 +138,18 @@ void runGame() {
     Persistent<Context> context = Context::New();
     Context::Scope contextScope(context);
     global = context->Global();
-    setupFluff();
     
+    // Start fluff
+    initFluff();
     executeScript(loadScript("main"));
     callFunction("onLoad", NULL, 0);
-    
     if (gameRunning) {
         GameLoop();
     }
     
+    // Clear up V8
+    fluff.Dispose();
+    input.Dispose();
     global.Clear();
     fluff.Clear();
     context.Dispose();
@@ -183,9 +187,8 @@ void resetGame() {
     gameMouseScrollOld = 0;
     gameMouseScroll = 0;
     resetInput();
-    
-    cout << "reset" << endl;
 }
+
 
 // Main ------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
