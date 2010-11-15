@@ -41,33 +41,45 @@ Persistent<Object> input;
 sf::Window gameWindow;
 
 // General
-bool gameRunning = false;
-int gameFPS = 30;
-bool gameFocus = false;
-bool gameMouse = false;
-int gameCursor = true;
+bool gameRunning;
+bool gameReload;
+int gameFPS;
+bool gameFocus;
+bool gameMouse;
+int gameCursor;
 
 // OpenGL
-int gameStacks = 0;
+int gameStacks;
+float gameBackColorR;
+float gameBackColorG;
+float gameBackColorB;
+float gameBackColorA;
+
+float gameColorR;
+float gameColorG;
+float gameColorB;
+float gameColorA;
+
+int gameBlendMode;
 
 // Keyboard
 const int KEY_COUNT = 384;
-int gameKeyReset = true;
+int gameKeyReset;
 int gameKeys[KEY_COUNT];
 int gameKeysOld[KEY_COUNT];
-bool gameKeyShift = false;
-bool gameKeyControl = false;
-bool gameKeyAlt = false;
+bool gameKeyShift;
+bool gameKeyControl;
+bool gameKeyAlt;
 
 // Mouse
 const int BUTTON_COUNT = 10;
-int gameMouseX = 0;
-int gameMouseY = 0;
-bool gameButtonReset = true;
+int gameMouseX;
+int gameMouseY;
+bool gameButtonReset;
 int gameButtons[BUTTON_COUNT];
 int gameButtonsOld[BUTTON_COUNT];
-int gameMouseScrollOld = 0;
-int gameMouseScroll = 0;
+int gameMouseScrollOld;
+int gameMouseScroll;
 
 #endif
 

@@ -31,6 +31,7 @@
 #include "util.cc"
 #include "input.cc"
 #include "graphics.cc"
+#include "socket.cc"
 #include "game.cc"
 
 using namespace v8;
@@ -78,15 +79,14 @@ void setupFluff() {
     EXPOSE(graphicsTemplate, "getMouse", GraphicsGetMouse);
     
     EXPOSE(graphicsTemplate, "setBackgroundColor", GraphicsSetBackgroundColor);
+    EXPOSE(graphicsTemplate, "setBackgroundAlpha", GraphicsSetBackgroundAlpha); 
     EXPOSE(graphicsTemplate, "clear", GraphicsClear);
     
     EXPOSE(graphicsTemplate, "setBlendMode", GraphicsSetBlendMode);
     EXPOSE(graphicsTemplate, "setColor", GraphicsSetColor);
-    
-    EXPOSE(graphicsTemplate, "setPolygonSmoothing", GraphicsSetPolygonSmoothing);
+    EXPOSE(graphicsTemplate, "setAlpha", GraphicsSetAlpha);
     
     EXPOSE(graphicsTemplate, "setLineWidth", GraphicsSetLineWidth);
-    EXPOSE(graphicsTemplate, "setLineSmoothing", GraphicsSetLineSmoothing);
     
     EXPOSE(graphicsTemplate, "line", GraphicsLine);
     
@@ -124,21 +124,22 @@ void setupFluff() {
     
     // Global
     FUNC_TEMPLATE(requireTemplate, requireScript);
+    FUNC_TEMPLATE(webSocketTemplate, Socket::wrap);
+    SET(global, "global", global);
     SET(global, "fluff", fluff);
     SET(global, "require", requireTemplate->GetFunction());
+    SET(global, "Socket", webSocketTemplate->GetFunction());
 }
 
 
-// Main ------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-int main(int argc, char* argv[]) {
+void runGame() {
     HandleScope scope;
     Persistent<Context> context = Context::New();
     Context::Scope contextScope(context);
     global = context->Global();
     setupFluff();
     
-    loadGame();
+    executeScript(loadScript("main"));
     callFunction("onLoad", NULL, 0);
     
     if (gameRunning) {
@@ -148,6 +149,53 @@ int main(int argc, char* argv[]) {
     global.Clear();
     fluff.Clear();
     context.Dispose();
+}
+
+void resetGame() {
+    gameRunning = false;
+    gameReload = false;
+    gameFPS = 30;
+    gameFocus = false;
+    gameMouse = false;
+    gameCursor = true;
+    
+    // OpenGL
+    gameStacks = 0;
+    gameBackColorR = 0;
+    gameBackColorG = 0;
+    gameBackColorB = 0;
+    gameBackColorA = 1;
+    gameColorR = 1;
+    gameColorG = 1;
+    gameColorB = 1;
+    gameColorA = 1;
+    gameBlendMode = 0;
+    
+    // Input
+    gameKeyReset = true;
+    gameKeyShift = false;
+    gameKeyControl = false;
+    gameKeyAlt = false;
+    
+    gameMouseX = 0;
+    gameMouseY = 0;
+    gameButtonReset = true;
+    gameMouseScrollOld = 0;
+    gameMouseScroll = 0;
+    resetInput();
+    
+    cout << "reset" << endl;
+}
+
+// Main ------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+int main(int argc, char* argv[]) {
+    gameReload = true;
+    while(gameReload) {
+        gameReload = false;
+        resetGame();
+        runGame();
+    }
     return 0;
 }
 

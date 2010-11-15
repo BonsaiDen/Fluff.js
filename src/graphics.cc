@@ -126,10 +126,16 @@ Handle<Value> GraphicsGetScreenHeight(const Arguments& args) {
 
 // Settings --------------------------------------------------------------------
 Handle<Value> GraphicsSetBackgroundColor(const Arguments& args) {
-    glClearColor(ToFloat(args[0]) / 255.f,
-                 ToFloat(args[1]) / 255.f,
-                 ToFloat(args[2]) / 255.f, 1.f);
-    
+    gameBackColorR = ToFloat(args[0]) / 255.f;
+    gameBackColorG = ToFloat(args[1]) / 255.f;
+    gameBackColorB = ToFloat(args[2]) / 255.f;
+    glClearColor(gameBackColorR, gameBackColorG, gameBackColorB, gameBackColorA);
+    return Undefined();
+}
+
+Handle<Value> GraphicsSetBackgroundAlpha(const Arguments& args) {
+    gameColorA = ToFloat(args[0]);
+    glColor4f(gameBackColorR, gameBackColorG, gameBackColorB, gameBackColorA);
     return Undefined();
 }
 
@@ -142,35 +148,13 @@ Handle<Value> GraphicsSetBlendMode(const Arguments& args) {
     String::Utf8Value mode(args[0]->ToString());
     string cmode = *mode;
     
-    if (cmode.compare("additive") == 0) {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    if (cmode.compare("lighter") == 0) {
+        gameBlendMode = 1;
     
     } else if (cmode.compare("default") == 0) {
-        glDisable(GL_BLEND);
+        gameBlendMode = 0;
     }
-    return Undefined();
-}
-
-Handle<Value> GraphicsSetLineSmoothing(const Arguments& args) {
-    if (args[0]->IsTrue()) {
-        glEnable(GL_LINE_SMOOTH);
-        glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
-    
-    } else {
-        glDisable(GL_LINE_SMOOTH);
-    }
-    return Undefined();
-}
-
-Handle<Value> GraphicsSetPolygonSmoothing(const Arguments& args) {
-    if (args[0]->IsTrue()) {
-        glEnable(GL_POLYGON_SMOOTH);
-        glHint(GL_POLYGON_SMOOTH_HINT, GL_DONT_CARE);
-    
-    } else {
-        glDisable(GL_POLYGON_SMOOTH);
-    }
+    GameSetBlendMode();
     return Undefined();
 }
 
@@ -180,10 +164,16 @@ Handle<Value> GraphicsSetLineWidth(const Arguments& args) {
 }
 
 Handle<Value> GraphicsSetColor(const Arguments& args) {
-    glColor3f(ToFloat(args[0]) / 255.f,
-              ToFloat(args[1]) / 255.f,
-              ToFloat(args[2]) / 255.f);
-    
+    gameColorR = ToFloat(args[0]) / 255.f;
+    gameColorG = ToFloat(args[1]) / 255.f;
+    gameColorB = ToFloat(args[2]) / 255.f;
+    glColor4f(gameColorR, gameColorG, gameColorB, gameColorA);
+    return Undefined();
+}
+
+Handle<Value> GraphicsSetAlpha(const Arguments& args) {
+    gameColorA = ToFloat(args[0]);
+    glColor4f(gameColorR, gameColorG, gameColorB, gameColorA);
     return Undefined();
 }
 
@@ -317,8 +307,8 @@ Handle<Value> GraphicsScale(const Arguments& args) {
 }
 
 Handle<Value> GraphicsPush(const Arguments& args) {
-    gameStacks++;
     glPushMatrix();
+    gameStacks++;
     return Undefined();
 }
 

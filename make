@@ -8,5 +8,5 @@ options += '-O2 -s -ffast-math -momit-leaf-frame-pointer ' if '-r' in sys.argv e
 options += '-g ' if '-d' in sys.argv else ''
 options += '-pg ' if '-p' in sys.argv else ''
 
-os.system('g++ src/fluff.cc %s -o fluff -lv8 -lsfml-system -lsfml-window' % options)
+os.system('g++ src/fluff.cc %s -o fluff -lv8 -lsfml-system -lsfml-window -lsfml-network' % options)
 

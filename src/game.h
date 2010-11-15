@@ -32,8 +32,10 @@ using namespace std;
 // -----------------------------------------------------------------------------
 void GameCreate(int width, int height, bool full, bool vsync, int fsaa);
 void GameSetCaption(const char *caption);
-void GameInitGL();
-void GameLoop();
-void GameEvents();
+void GameInitGL(void);
+void GameSetBlendMode(void);
+void GameLoop(void);
+void GameEvents(void);
+void GameSockets(void);
 Handle<Value> GameExit(const Arguments& args);
 

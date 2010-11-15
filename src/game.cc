@@ -25,6 +25,7 @@
 #include "graphics.h"
 #include "game.h"
 #include "input.h"
+#include "socket.h"
 #include "fluff.h"
 #include <iostream>
 using namespace v8;
@@ -49,46 +50,88 @@ void GameCreate(int width, int height, bool full, bool vsync, int fsaa) {
     gameWindow.EnableKeyRepeat(false);
     gameWindow.UseVerticalSync(vsync);
     gameWindow.SetFramerateLimit(gameFPS);
-    gameRunning = true;
     GameInitGL();
+    gameRunning = true;
 }
 
 void GameSetCaption(const char *caption) {
     // TODO modify SFML to support this -.-"
 }
 
-void GameInitGL() {
+void GameInitGL(void) {
+    if (gameRunning) {
+        glPopMatrix();
+    }
+    glPushMatrix();
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, gameWindow.GetWidth(), gameWindow.GetHeight(), 0, 0, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glDisable(GL_DEPTH_TEST);
-    glClearColor(0.f, 0.f, 0.f, 1.f);
+    
+    glClearColor(gameBackColorR, gameBackColorG, gameBackColorB, gameBackColorA);
     glClear(GL_COLOR_BUFFER_BIT);
+    
     glEnable(GL_MULTISAMPLE);
+    glDisable(GL_BLEND);
+    glEnable(GL_BLEND);
+    GameSetBlendMode();
+    glColor4f(gameColorR, gameColorG, gameColorB, gameColorA);
 }
 
-void GameLoop() {
+void GameSetBlendMode(void) {
+    switch (gameBlendMode) {
+        case 0:
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            break;
+        
+        case 1:
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            break;
+        
+        default:
+            break;
+    }
+}
+
+void GameLoop(void) {
     HandleScope scope;
     Handle<Number> delta;
     Handle<Value> args[1];
     
-    resetInput();
     while (gameRunning) {
         GameEvents();
+        GameSockets();
         
         delta = Number::New(gameWindow.GetFrameTime());
         args[0] = delta;
         callFunction("onUpdate", args, 1);
+        
         callFunction("onDraw", NULL, 0);
         gameWindow.Display();
+    }
+    for(unsigned int i = 0; i < sockets.size(); i++) {
+        sockets[i]->close();
     }
     callFunction("onExit", NULL, 0);
     gameWindow.Close();
 }
 
-void GameEvents() {
+
+void GameSockets(void) {
+    for(unsigned int i = 0; i < sockets.size(); i++) {
+        Socket *socket = sockets.at(i);
+        if (socket->status == 0) {
+            socket->connect();
+        
+        } else if (socket->status != 3) {
+            socket->handle();
+        }
+    }
+}
+
+void GameEvents(void) {
     updateInput();
     
     sf::Event event;
@@ -99,9 +142,16 @@ void GameEvents() {
             case sf::Event::KeyPressed:
                 if (event.Key.Code == sf::Key::Escape) {
                     gameRunning = false;
+                
+                } else if (event.Key.Code == sf::Key::F5) {
+                    gameRunning = false;
+                    gameReload = true;
                 }
+                
+                
                 gameKeys[event.Key.Code] = 1;
                 
+                cout << event.Key.Code << endl;
                 if (event.Key.Code == sf::Key::LControl
                     || event.Key.Code == sf::Key::RControl) {
                     

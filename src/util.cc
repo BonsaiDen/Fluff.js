@@ -32,9 +32,28 @@ using namespace std;
 
 // JavaScript ------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-void loadGame() {
+Handle<Value> requireScript(const Arguments& args) {
     HandleScope scope;
-    executeScript(loadScript("main"));
+    if (args.Length() == 1) {
+        String::Utf8Value name(args[0]->ToString());
+        return scope.Close(executeScript(loadScript(*name)));
+
+    } else {
+        return Undefined();
+    }
+}
+
+Handle<Value> executeScript(Handle<Script> script) {
+    HandleScope scope;
+    TryCatch tryCatch;
+    Handle<Value> result = script->Run();
+    if (result.IsEmpty()) {
+        handleException(&tryCatch);
+        return Undefined();
+    
+    } else {
+        return scope.Close(result);
+    }
 }
 
 Handle<Script> loadScript(const char *name) {
@@ -69,8 +88,8 @@ Handle<Script> loadScript(const char *name) {
     }
     
     // Wrap it!
-    Handle<String> pre = String::New("(function() {var exports = {}; (function(exports) {\n");
-    Handle<String> end = String::New("\n})(exports); return exports; })();");    
+    Handle<String> pre = String::New("(function() {var exports = {}; (function(exports, global) {\n");
+    Handle<String> end = String::New("\n})(exports, global); return exports;})();");
     Handle<String> wrapped = String::Concat(String::Concat(pre, source), end);
     
     script = Script::Compile(wrapped, String::New(filename.data()));
@@ -82,28 +101,22 @@ Handle<Script> loadScript(const char *name) {
     return scope.Close(script);
 }
 
-Handle<Value> requireScript(const Arguments& args) {
-    HandleScope scope;
-    if (args.Length() == 1) {
-        String::Utf8Value name(args[0]->ToString());
-        return scope.Close(executeScript(loadScript(*name)));
-
-    } else {
-        return Undefined();
+Handle<Value> log(const Arguments& args) {
+    bool first = true;
+    for (int i = 0; i < args.Length(); i++) {
+        HandleScope handle_scope;
+        if (first) {
+            first = false;
+        
+        } else {
+            printf(" ");
+        }
+        
+        String::AsciiValue str(args[i]);
+        printf("%s", *str);
     }
-}
-
-Handle<Value> executeScript(Handle<Script> script) {
-    HandleScope scope;
-    TryCatch tryCatch;
-    Handle<Value> result = script->Run();
-    if (result.IsEmpty()) {
-        handleException(&tryCatch);
-        return Undefined();
-    
-    } else {
-        return scope.Close(result);
-    }
+    printf("\n");
+    return Undefined();
 }
 
 void handleException(TryCatch* tryCatch) {
@@ -141,20 +154,6 @@ void handleException(TryCatch* tryCatch) {
     }
 }
 
-
-// V8 --------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-inline int ToInt32(Handle<Value> i) {
-    return i->Int32Value();
-}
-
-inline float ToFloat(Handle<Value> f) {
-    return static_cast<float>(f->NumberValue());
-}
-
-
-// Fluff -----------------------------------------------------------------------
-// -----------------------------------------------------------------------------
 bool callFunction(const char *name, Handle<Value> *args, int argc) {
     HandleScope scope;
     Handle<Value> object = fluff->Get(String::NewSymbol(name));
@@ -169,21 +168,11 @@ bool callFunction(const char *name, Handle<Value> *args, int argc) {
     }
 }
 
-Handle<Value> log(const Arguments& args) {
-    bool first = true;
-    for (int i = 0; i < args.Length(); i++) {
-        HandleScope handle_scope;
-        if (first) {
-            first = false;
-        
-        } else {
-            printf(" ");
-        }
-        
-        String::AsciiValue str(args[i]);
-        printf("%s", *str);
-    }
-    printf("\n");
-    return Undefined();
+inline int ToInt32(Handle<Value> i) {
+    return i->Int32Value();
+}
+
+inline float ToFloat(Handle<Value> f) {
+    return static_cast<float>(f->NumberValue());
 }
 

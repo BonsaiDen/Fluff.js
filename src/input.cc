@@ -176,8 +176,3 @@ Handle<Value> InputAlt(const Arguments& args) {
     return Boolean::New(gameKeyAlt);
 }
 
-
-
-
-
-

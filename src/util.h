@@ -27,20 +27,13 @@ using namespace std;
 
 
 // JavaScript ------------------------------------------------------------------
-void loadGame();
-Handle<Script> loadScript(const char *filename);
+Handle<Script> loadScript(const char *name);
+Handle<Value> requireScript(const Arguments& args);
 Handle<Value> executeScript(Handle<Script> script);
-void handleException(TryCatch* tryCatch);
-
-
-// Fluff -----------------------------------------------------------------------
-bool callFunction(const char *name, Handle<Value> *args, int argc);
-void setupFluff();
 Handle<Value> log(const Arguments& args);
+void handleException(TryCatch* tryCatch);
+bool callFunction(const char *name, Handle<Value> *args, int argc);
 
-
-// V8 --------------------------------------------------------------------------
 inline int ToInt32(Handle<Value> i);
 inline float ToFloat(Handle<Value> f);
-
 
