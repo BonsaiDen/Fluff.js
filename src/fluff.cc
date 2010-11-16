@@ -114,6 +114,11 @@ void initFluff() {
     // Input
     input = POBJECT(inputTemplate);
     
+    // Network
+    OBJ_TEMPLATE(networkTemplate);
+    EXPOSE(networkTemplate, "Socket", Socket::create);
+    network = POBJECT(networkTemplate);
+    
     // Fluff
     OBJ_TEMPLATE(fluffTemplate);
     EXPOSE(fluffTemplate, "log", log);
@@ -122,14 +127,14 @@ void initFluff() {
     
     SET(fluff, "graphics", POBJECT(graphicsTemplate));
     SET(fluff, "input", input);
+    SET(fluff, "network", network);
     
     // Global
     FUNC_TEMPLATE(requireTemplate, requireScript);
-    FUNC_TEMPLATE(webSocketTemplate, Socket::create);
     SET(global, "global", global);
     SET(global, "fluff", fluff);
     SET(global, "require", requireTemplate->GetFunction());
-    SET(global, "Socket", webSocketTemplate->GetFunction());
+
 }
 
 
@@ -141,6 +146,7 @@ void runGame() {
     
     // Start fluff
     initFluff();
+    executeScript(loadScript("lib/fluffsocket"));
     executeScript(loadScript("main"));
     callFunction("onLoad", NULL, 0);
     if (gameRunning) {
@@ -150,6 +156,7 @@ void runGame() {
     // Clear up V8
     fluff.Dispose();
     input.Dispose();
+    network.Dispose();
     global.Clear();
     fluff.Clear();
     context.Dispose();

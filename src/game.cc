@@ -122,10 +122,7 @@ void GameLoop(void) {
 void GameSockets(void) {
     for(unsigned int i = 0; i < sockets.size(); i++) {
         Socket *socket = sockets.at(i);
-        if (socket->status == 0) {
-            socket->connect();
-        
-        } else if (socket->status != 3) {
+        if (socket->status > 0 && socket->status != 3) {
             socket->handle();
         }
     }

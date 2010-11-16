@@ -22,7 +22,6 @@
 
 #include <v8.h>
 #include <SFML/Network.hpp>
-#include <string>
 #include "wrap.h"
 
 using namespace v8;
@@ -36,8 +35,6 @@ using namespace std;
 
 class Socket: WrappedClass {
     private:
-        int port;
-        string host;
         vector< Persistent<String> > sendQueue;
         
         sf::SocketTCP socket;
@@ -49,12 +46,12 @@ class Socket: WrappedClass {
     public:
         int status;
         
-        Socket(string host, int port);
-        void connect();
+        Socket();
         void handle();
         void close();
         
-        static Handle<Value> create(const Arguments& args); 
+        static Handle<Value> create(const Arguments& args);
+        static Handle<Value> connect(const Arguments& args);
         static Handle<Value> send(const Arguments& args);
         static Handle<Value> close(const Arguments& args);
 

@@ -24,7 +24,6 @@
 
 #include <v8.h>
 #include <SFML/Network.hpp>
-#include <string>
 #include "util.h"
 #include "socket.h"
 
@@ -35,12 +34,12 @@ using namespace v8;
 // -----------------------------------------------------------------------------
 Handle<Value> Socket::create(const Arguments& args) {
     HandleScope scope;
-    if (args.IsConstructCall() && args.Length() == 2) {
-        String::Utf8Value host(args[0]->ToString());
-        Socket *socket = new Socket(string(*host), ToInt32(args[1]));
+    if (args.IsConstructCall()) {
+        Socket *socket = new Socket();
         
         if (!socket->hasTemplate()) {
             Persistent<ObjectTemplate> tmp = socket->createTemplate();
+            tmp->Set(String::New("connect"), FunctionTemplate::New(Socket::connect));
             tmp->Set(String::New("send"), FunctionTemplate::New(Socket::send));
             tmp->Set(String::New("close"), FunctionTemplate::New(Socket::close));            
         }
@@ -51,25 +50,8 @@ Handle<Value> Socket::create(const Arguments& args) {
     }
 }
 
-Socket::Socket(string host, int port) {
+Socket::Socket() {
     status = 0;
-    this->host = host;
-    this->port = port;
-    sockets.push_back(this);
-}
-
-void Socket::connect() {
-    if (status == 0) {
-        const sf::IPAddress address(host);
-        sf::Socket::Status result = socket.Connect(port, address, 2.0f);        
-        if (result == sf::Socket::Done) {
-            socket.SetBlocking(false);
-            status = 2;
-        
-        } else {
-            status = 3;
-        }
-    }
 }
 
 void Socket::call(const char *name, Handle<Value> *args, int argc) {
@@ -147,6 +129,26 @@ void Socket::handle() {
                 break;
         }
     }
+}
+
+Handle<Value> Socket::connect(const Arguments& args) {
+    Socket *socket = WrappedClass::unwrap<Socket>(args.This());
+    if (socket->status == 0 && args.Length() == 2) {
+        String::Utf8Value host(args[0]->ToString());
+        
+        const sf::IPAddress address(*host);
+        sf::Socket::Status result = socket->socket.Connect(ToInt32(args[1]), address, 2.0f);        
+        if (result == sf::Socket::Done) {
+            socket->socket.SetBlocking(false);
+            socket->status = 2;
+            sockets.push_back(socket);
+            return Boolean::New(true);
+        
+        } else {
+            socket->status = 3;
+        }
+    }
+    return Boolean::New(false);
 }
 
 Handle<Value> Socket::send(const Arguments& args) {

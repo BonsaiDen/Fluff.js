@@ -35,6 +35,7 @@ using namespace std;
 Handle<Object> global;
 Persistent<Object> fluff;
 Persistent<Object> input;
+Persistent<Object> network;
 
 
 // Game ------------------------------------------------------------------------
