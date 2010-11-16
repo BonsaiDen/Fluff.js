@@ -21,6 +21,7 @@
 */
 
 #include <SFML/Window.hpp>
+#include <stdio.h>
 #include "graphics.h"
 #include "game.h"
 #include "input.h"
@@ -110,6 +111,7 @@ void GameLoop(void) {
         
         callFunction("onDraw", NULL, 0);
         gameWindow.Display();
+        fflush(stdout);
     }
     for(unsigned int i = 0; i < sockets.size(); i++) {
         sockets[i]->close();

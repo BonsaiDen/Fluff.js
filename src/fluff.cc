@@ -27,6 +27,7 @@
 #define FUNC_TEMPLATE(obj, func) Handle<FunctionTemplate> obj = FunctionTemplate::New(func);
 
 #include <v8.h>
+#include <stdio.h>
 #include "fluff.h"
 #include "util.cc"
 #include "input.cc"
@@ -200,6 +201,11 @@ void resetGame() {
 // Main ------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 int main(int argc, char* argv[]) {
+    
+    // Basic Setup
+    setvbuf(stdout, NULL, _IOFBF, 8192);
+    
+    // Game
     gameReload = true;
     while(gameReload) {
         gameReload = false;
