@@ -59,6 +59,10 @@ class WrappedClass {
         Persistent<ObjectTemplate> classTemplate;
         bool classTemplateCreated; 
         
+        WrappedClass() {
+            classTemplateCreated = false;
+        }    
+        
         inline bool hasTemplate() {
             return classTemplateCreated;
         }
@@ -77,7 +81,6 @@ class WrappedClass {
             HandleScope scope;
             Handle<Object> result = classTemplate->NewInstance();
             result->SetInternalField(0, External::New(this));
-            
             self = Persistent<Object>::New(scope.Close(result));
             self.MakeWeak(this, collect);
             return self;
