@@ -1,29 +1,36 @@
 
 var test = require('foo'); // require works!
 
+var chr = String.fromCharCode;
+
+
 
 // Fluff example program thingy ------------------------------------------------
 // -----------------------------------------------------------------------------
+var socket;
 fluff.onLoad = function() {
     fluff.graphics.setMode(480, 320);
     fluff.graphics.setBackgroundColor(0, 0, 0);
    // fluff.graphics.setBlendMode('default');
     
-    var socket = new Socket("127.0.0.1", 28785);
+    socket = new fluff.network.FluffSocket();
     
-    socket.onConnect = function(success) {
-        fluff.log(success ? 'connected!' : 'failed...');
+    socket.onConnect = function() {
+        this.send('Hello Server from Fluff.js! ÄÖÜ' + chr(0) + 'foo' + chr(255));
     };
     
-    socket.onData = function(data) {
-        fluff.log(data);
+    socket.onMessage = function(msg) {
+        fluff.log(msg);
+    };
+    
+    socket.onError = function() {
+        fluff.log('error');
     };
     
     socket.onClose = function() {
         fluff.log('closed');
     };
-    
-    socket.send('Hello World äöü!');
+    socket.connect("127.0.0.1", 4731);
 };
 
 fluff.onUpdate = function(dt) {
@@ -35,29 +42,36 @@ fluff.onUpdate = function(dt) {
     } else if (fluff.input.getKeyPressed(50)) {
         fluff.graphics.setMode(640, 480);
         fluff.graphics.setBackgroundColor(255, 0, 255);
+    
+    } else if (fluff.input.getKeyPressed(51)) {
+        socket.close();
+    }
+    
+    if (fluff.input.getMouseClicked(0)) {
+        socket.send('Mouse clicked.. uh?');
     }
 };
 
 var alpha = 0;
 fluff.onDraw = function() {
     fluff.graphics.clear();
-    fluff.graphics.setAlpha(alpha);
-    alpha += 0.01;
-    if (alpha > 1) {
-        alpha = 0;
-    }
-    for(var i = 0; i < 10; i++) {
-        fluff.graphics.push();
-        fluff.graphics.translate(Math.random() * 10, Math.random() * 10);
-        fluff.graphics.setColor(255, 0, 0);
-        fluff.graphics.triangle(100, 0, 50, 200, 150, 200);
-        fluff.graphics.setColor(0, 255, 0);
-        fluff.graphics.circleFilled(200, 100, 50);
-        fluff.graphics.setColor(255, 255, 0);
-        fluff.graphics.setColor(0, 255, 255);
-        fluff.graphics.rectangleFilled(10, 10, 100, 50);
-        fluff.graphics.pop();
-    }
+//    fluff.graphics.setAlpha(alpha);
+//    alpha += 0.01;
+//    if (alpha > 1) {
+//        alpha = 0;
+//    }
+//    for(var i = 0; i < 10; i++) {
+//        fluff.graphics.push();
+//        fluff.graphics.translate(Math.random() * 10, Math.random() * 10);
+//        fluff.graphics.setColor(255, 0, 0);
+//        fluff.graphics.triangle(100, 0, 50, 200, 150, 200);
+//        fluff.graphics.setColor(0, 255, 0);
+//        fluff.graphics.circleFilled(200, 100, 50);
+//        fluff.graphics.setColor(255, 255, 0);
+//        fluff.graphics.setColor(0, 255, 255);
+//        fluff.graphics.rectangleFilled(10, 10, 100, 50);
+//        fluff.graphics.pop();
+//    }
 };
 
 fluff.onExit = function() {
