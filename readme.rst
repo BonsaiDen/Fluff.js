@@ -11,6 +11,24 @@ Compiling
 | Then just run the make script, you can also pass `-r` for optimizations.
 
 
+Done
+----
+**Input**
+    
+    - Some window events
+    - Basic functionality to get key and mouse states
+
+**Networking**
+
+    - Simple socket protocol based on UTF8 and length prefixes messages
+
+**Grahpics**
+    
+  - Basic Shapes
+  - Alpha blending
+  - Blendmodes(only lighten and normal at the moment)
+
+
 Todo
 ----
 
@@ -19,10 +37,6 @@ Todo
     - More events
     - Provide key mappings for getKey*
     - Provide List functions for get*Down etc.
-
-**Networking**
-
-    - Add WebSocket support, let's hook this up to Node.js! :D
 
 **Grahpics**
     
