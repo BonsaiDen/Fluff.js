@@ -35,7 +35,7 @@ using namespace v8;
 // -----------------------------------------------------------------------------
 Handle<Value> Socket::create(const Arguments& args) {
     HandleScope scope;
-    if (args.IsConstructCall()) {
+    if (args.IsConstructCall() && args.Length() == 2) {
         String::Utf8Value host(args[0]->ToString());
         Socket *socket = new Socket(string(*host), ToInt32(args[1]));
         
@@ -92,8 +92,9 @@ void Socket::handle() {
             for(unsigned int i = 0; i < sendQueue.size(); i++) {
                 Persistent<String> data = sendQueue.at(i);
                 int byteLength = data->Utf8Length();
-                char *buffer = (char*)malloc(byteLength);;
+                char *buffer = (char*)malloc(byteLength);
                 data->WriteUtf8(buffer, -1);
+                
                 if (socket.Send(buffer, byteLength) == sf::Socket::Done) {
                     free(buffer);
                     data.Dispose();
