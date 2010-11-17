@@ -73,6 +73,13 @@ Handle<Value> GraphicsSetMode(const Arguments& args) {
     return Boolean::New(created);
 }
 
+//Handle<Value> GraphicsSetSize(const Arguments& args) {
+//    if (args.Length() == 2 && args[0]->IsNumber() && args[1]->IsNumber()) {
+//        GameSetSize(ToInt32(args[0]), ToInt32(args[1]));
+//    }
+//    return Undefined();
+//}
+
 Handle<Value> GraphicsSetFPS(const Arguments& args) {
     if (args.Length() == 1) {
         gameFPS = ToInt32(args[0]);
@@ -150,7 +157,7 @@ Handle<Value> GraphicsSetBlendMode(const Arguments& args) {
     if (cmode.compare("lighter") == 0) {
         gameBlendMode = 1;
     
-    } else if (cmode.compare("default") == 0) {
+    } else if (cmode.compare("normal") == 0) {
         gameBlendMode = 0;
     }
     GameSetBlendMode();
@@ -286,6 +293,35 @@ Handle<Value> GraphicsPolygonFilled(const Arguments& args) {
     }
     glEnd();
     return Undefined();
+}
+
+
+// Text ------------------------------------------------------------------------
+Handle<Value> GraphicsSetFont(const Arguments& args) {
+    if (args.Length() == 2 && args[0]->IsString() && args[1]->IsNumber()){
+        String::Utf8Value name(args[0]->ToString());
+        string fontName(*name);
+        return Boolean::New(GameLoadFont(fontName, ToInt32(args[1])));
+    
+    } else {
+        return Boolean::New(false);
+    }
+}
+
+Handle<Value> GraphicsFontRotate(const Arguments& args) {
+    gameFontRotation = ToFloat(args[0]) * 180 / PI;
+    return Undefined();
+}
+
+Handle<Value> GraphicsFontScale(const Arguments& args) {
+    gameFontScaleX = ToFloat(args[0]);
+    gameFontScaleY = ToFloat(args[1]);
+    return Undefined();
+}
+
+Handle<Value> GraphicsDrawText(const Arguments& args) {
+    String::Utf8Value text(args[0]->ToString());
+    return Boolean::New(GameDrawText(*text, gameFont, ToInt32(args[1]), ToInt32(args[2]), ToInt32(args[3])));
 }
 
 

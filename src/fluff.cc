@@ -75,7 +75,8 @@ void initFluff() {
     OBJ_TEMPLATE(graphicsTemplate);
     EXPOSE(graphicsTemplate, "setMode", GraphicsSetMode);
     EXPOSE(graphicsTemplate, "setFPS", GraphicsSetFPS);
-    EXPOSE(graphicsTemplate, "getFPS", GraphicsGetFPS); 
+    EXPOSE(graphicsTemplate, "getFPS", GraphicsGetFPS);
+//    EXPOSE(graphicsTemplate, "setSize", GraphicsSetSize);
     EXPOSE(graphicsTemplate, "setPosition", GraphicsSetPosition);
     EXPOSE(graphicsTemplate, "setMouse", GraphicsSetMouse);
     EXPOSE(graphicsTemplate, "getMouse", GraphicsGetMouse);
@@ -111,6 +112,13 @@ void initFluff() {
     EXPOSE(graphicsTemplate, "push", GraphicsPush);
     EXPOSE(graphicsTemplate, "pop", GraphicsPop);
     EXPOSE(graphicsTemplate, "reset", GraphicsReset);
+    
+    // Text & font
+    EXPOSE(graphicsTemplate, "setFont", GraphicsSetFont);
+    EXPOSE(graphicsTemplate, "drawText", GraphicsDrawText);
+    
+    EXPOSE(graphicsTemplate, "rotateFont", GraphicsFontRotate);
+    EXPOSE(graphicsTemplate, "scaleFont", GraphicsFontScale);
     
     // Input
     input = POBJECT(inputTemplate);
@@ -182,6 +190,12 @@ void resetGame() {
     gameColorB = 1;
     gameColorA = 1;
     gameBlendMode = 0;
+    
+    gameFontRotation = 0;
+    gameFontScaleX = 1;
+    gameFontScaleY = 1;
+    
+    GameResetFonts();
     
     // Input
     gameKeyReset = true;

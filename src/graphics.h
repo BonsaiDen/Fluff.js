@@ -52,6 +52,13 @@ Handle<Value> GraphicsSetLineWidth(const Arguments& args);
 Handle<Value> GraphicsSetColor(const Arguments& args);
 
 
+// Font ------------------------------------------------------------------------
+Handle<Value> GraphicsSetFont(const Arguments& args);
+Handle<Value> GraphicsRotateText(const Arguments& args);
+Handle<Value> GraphicsScaleText(const Arguments& args);
+Handle<Value> GraphicsDrawText(const Arguments& args);
+
+
 // Shapes ----------------------------------------------------------------------
 Handle<Value> GraphicsLine(const Arguments& args);
 Handle<Value> GraphicsTriangle(const Arguments& args);

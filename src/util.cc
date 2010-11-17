@@ -131,7 +131,7 @@ void handleException(TryCatch* tryCatch) {
         // Filename, line, message
         String::Utf8Value filename(message->GetScriptResourceName());
         int line = message->GetLineNumber();
-        printf("%s:%i: %s\n", *filename, line, *exception);
+        printf("%s:%i: %s\n", *filename, line - 1, *exception); // -1 for the wrapper
         
         // Sourceline
         String::Utf8Value sourceLine(message->GetSourceLine());

@@ -22,7 +22,7 @@
 
 #include <v8.h>
 #include <SFML/Window.hpp>
-#include <SFML/System.hpp>
+#include <SFML/Graphics.hpp>
 
 using namespace v8;
 using namespace std;
@@ -39,7 +39,7 @@ Persistent<Object> network;
 
 
 // Game ------------------------------------------------------------------------
-sf::Window gameWindow;
+sf::RenderWindow gameWindow;
 
 // General
 bool gameRunning;
@@ -62,6 +62,16 @@ float gameColorB;
 float gameColorA;
 
 int gameBlendMode;
+
+float gameFontRotation;
+float gameFontScaleX;
+float gameFontScaleY;
+
+// Font
+bool gameUseFonts;
+string gameFont;
+vector<sf::Font*> gameFontData;
+vector<string*> gameFontNames;
 
 // Keyboard
 const int KEY_COUNT = 384;

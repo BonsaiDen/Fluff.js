@@ -21,6 +21,7 @@
 */
 
 #include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 #include <stdio.h>
 #include "graphics.h"
 #include "game.h"
@@ -29,6 +30,7 @@
 #include "util.h"
 #include "fluff.h"
 
+#include <iostream>
 using namespace v8;
 using namespace std;
 
@@ -51,12 +53,17 @@ void GameCreate(int width, int height, bool full, bool vsync, int fsaa) {
     gameWindow.EnableKeyRepeat(false);
     gameWindow.UseVerticalSync(vsync);
     gameWindow.SetFramerateLimit(gameFPS);
+    gameWindow.PreserveOpenGLStates(gameUseFonts);
     GameInitGL();
     gameRunning = true;
 }
 
 void GameSetCaption(const char *caption) {
     // TODO modify SFML to support this -.-"
+}
+
+void GameSetSize(int width, int height) {
+    gameWindow.SetSize(width, height);
 }
 
 void GameInitGL(void) {
@@ -93,6 +100,72 @@ void GameSetBlendMode(void) {
         
         default:
             break;
+    }
+}
+
+void GameResetFonts(void) {
+    gameUseFonts = false;
+    gameFont = "";
+    for(unsigned int i = 0; i < gameFontData.size(); i++) {
+        sf::Font *font = gameFontData.at(i);
+        string *str = gameFontNames.at(i);
+        delete font;
+        delete str;
+    }
+    gameFontData.clear();
+    gameFontNames.clear();
+}
+
+bool GameLoadFont(string fontName, int size) {
+    for(unsigned int i = 0; i < gameFontNames.size(); i++) {
+        if (gameFontNames.at(i)->compare(fontName) == 0) {
+            gameFont = string(fontName);
+            return true;
+        }
+    }
+    
+    sf::Font *font = new sf::Font();
+    if (font->LoadFromFile(fontName, size)) {
+        gameFontData.push_back(font);
+        gameFontNames.push_back(new string(fontName));
+        gameFont = string(fontName);
+        return true;
+    
+    } else {
+        delete font;
+        return false;
+    }
+}
+
+bool GameDrawText(const char *text, string fontName, int x, int y, int size) {
+    if (!gameUseFonts) {
+        gameUseFonts = true;
+        gameWindow.PreserveOpenGLStates(gameUseFonts);
+    }
+    sf::Font *font = NULL;
+    for(unsigned int i = 0; i < gameFontNames.size(); i++) {
+        if (gameFontNames.at(i)->compare(fontName) == 0) {
+            font = gameFontData.at(i);
+            break;
+        }
+    }
+    if (font != NULL) {
+        sf::String textData(text, *font, size);
+        textData.Move(x, y);
+        textData.SetColor(sf::Color(gameColorR * 255, gameColorG * 255,
+                                    gameColorB * 255, gameColorA * 255));
+        
+        if (gameFontRotation != 0) {
+            textData.Rotate(gameFontRotation);
+        }
+        if (gameFontScaleX != 1 || gameFontScaleY != 1) {
+            textData.Scale(gameFontScaleX, gameFontScaleY);
+        }
+        gameWindow.Draw(textData);
+        return true;
+        
+    } else {
+        return false;
     }
 }
 

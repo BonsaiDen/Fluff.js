@@ -32,8 +32,12 @@ using namespace std;
 // -----------------------------------------------------------------------------
 void GameCreate(int width, int height, bool full, bool vsync, int fsaa);
 void GameSetCaption(const char *caption);
+void GameSetSize(int width, int height);
 void GameInitGL(void);
 void GameSetBlendMode(void);
+void GameResetFonts(void);
+bool GameLoadFont(string fontName, int size);
+bool GameDrawText(const char *text, string fontName, int x, int y, int size);
 void GameLoop(void);
 void GameEvents(void);
 void GameSockets(void);
