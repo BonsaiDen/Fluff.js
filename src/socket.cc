@@ -81,7 +81,6 @@ void Socket::handle() {
                     free(buffer);
                     data.Dispose();
                     sendQueue.erase(sendQueue.begin() + i);
-                    i--;
                 
                 } else {
                     free(buffer);
